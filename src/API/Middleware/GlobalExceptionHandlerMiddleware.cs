@@ -31,7 +31,7 @@ public class GlobalExceptionHandlerMiddleware
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        
+
         var response = new { error = "An unexpected error occurred. Please try again later." };
 
         context.Response.StatusCode = exception switch

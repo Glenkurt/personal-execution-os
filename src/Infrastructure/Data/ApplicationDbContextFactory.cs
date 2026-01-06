@@ -13,7 +13,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        
+
         var connectionString = "Host=localhost;Port=5432;Database=PersonalExecutionOS;Username=postgres;Password=postgres";
         optionsBuilder.UseNpgsql(connectionString);
 

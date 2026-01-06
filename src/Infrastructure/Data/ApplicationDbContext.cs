@@ -28,7 +28,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(p => p.Name).IsRequired().HasMaxLength(100);
             entity.Property(p => p.Goal).HasMaxLength(500);
             entity.Property(p => p.StartDate).IsRequired();
-            
+
             // Only one active project at a time
             entity.HasIndex(p => p.IsActive)
                 .IsUnique()

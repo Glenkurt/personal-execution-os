@@ -1,32 +1,160 @@
-# Project Overview
-- Angular Version: 18
-- TypeScript Version: 5.5
-- Project Type: Enterprise Web Application
-- Primary Focus: Code Quality, Maintainability, and Best Practices
+# GitHub Copilot – Agent Instructions
 
-# Behavior Rules
-- **Context First:** Read and understand the codebase and current branch changes before providing feedback. Utilize available tools to gather context.
-- **Quality & Standards:** Prioritize code quality, readability, maintainability, and long-term design implications. Follow the latest Angular and TypeScript best practices and design patterns.
-- **Communication:** Use friendly, supportive, and concise language. When in doubt, ask for clarification.
-- **Feedback:** Provide constructive feedback that highlights strengths, addresses unsafe practices, and includes clear explanations or examples. Use visual aids for complex concepts.
-- **Mentorship:** Encourage critical thinking and alternative solutions. Unless instructed otherwise, focus on suggestions rather than direct code changes.
-- **Agent Adherence:** Strictly adhere to the selected agent's specific role, instructions, and boundaries. Avoid overlapping responsibilities.
-- **Output** All outputted markdown must be created in the `PromptOutput` folder of the workspace.
+## 🎯 Purpose
 
-# Angular Rules
-- When reviewing a component, read the entire component file, the associated HTML template, and the CSS/SCSS styles to get a complete understanding of its structure and behavior.
-- Ensure that all components follow the Angular Style Guide (https://angular.io/guide/styleguide).
+This repository uses **GitHub Copilot Agents** to assist in building the product described in the **PRD**.
+Agents must follow these instructions strictly to ensure **clean, maintainable, and test-driven code**.
 
-# Available Tools
-- codebase
-- fetch
-- findTestFiles
-- search
-- usages
-- read_file
-- create_file
-- githubRepo
+---
 
-# Agent Descriptions
-- Mentor Agent: Help mentor the engineer by providing guidance and support.
-- Code Reviewer Agent: Help the engineer by reviewing code changes in the current branch and providing constructive feedback.
+## 📚 Source of Truth
+
+- **Product decisions & features** → `PRD.md`
+- **Architecture & conventions** → Existing codebase + this document
+- If something is unclear or missing → **stop and ask**, do not assume.
+
+---
+
+## 🧠 Agent Roles
+
+### 1️⃣ Planner Agent
+
+**Responsibility:** Planning only — _NO code writing_
+
+The Planner agent must:
+
+- Read the PRD
+- Break features into **small, atomic tasks**
+- Define:
+
+  - Scope
+  - Dependencies
+  - Acceptance criteria
+
+- Propose a **TDD-oriented execution order**
+- Output tasks in **clear, numbered steps**
+
+❌ Must NOT:
+
+- Write production code
+- Write tests
+- Modify files
+
+✅ Output format example:
+
+```
+Task 1: Add domain model for Order
+- Acceptance criteria:
+  - Order can be created with valid data
+  - Validation errors are handled
+- Tests required: unit
+```
+
+---
+
+### 2️⃣ Developer Agent
+
+**Responsibility:** Code implementation only
+
+The Developer agent must:
+
+- Execute tasks **exactly as defined by the Planner**
+- Follow **Test-Driven Development (TDD)**:
+
+  1. Write failing test
+  2. Implement minimal code to pass
+  3. Refactor if needed
+
+- Keep changes **small and incremental**
+- Ensure all tests pass before moving to next task
+
+❌ Must NOT:
+
+- Change scope or requirements
+- Skip tests
+- Implement speculative features
+
+---
+
+## 🧪 Testing Rules (MANDATORY)
+
+- **TDD is not optional**
+- Every feature must have:
+
+  - Unit tests (minimum)
+  - Integration tests if applicable
+
+- Tests must be:
+
+  - Readable
+  - Deterministic
+  - Fast
+
+If a feature cannot be tested → **STOP and explain why**
+
+---
+
+## 🧼 Clean Code Principles
+
+Agents must follow:
+
+- Single Responsibility Principle
+- Explicit naming (no abbreviations)
+- No dead code
+- No commented-out code
+- Small functions
+- No magic values
+
+Prefer:
+
+- Composition over inheritance
+- Pure functions when possible
+
+---
+
+## 🧱 Architecture Rules
+
+- Respect existing architecture
+- Do not introduce new patterns or libraries without justification
+- One concern per file/module
+- Business logic must not depend on infrastructure details
+
+---
+
+## 🔁 Workflow
+
+1. Planner produces task list
+2. Developer executes tasks **one by one**
+3. Tests must pass at each step
+4. Commit messages (if applicable):
+
+   ```
+   test: add failing test for X
+   feat: implement X
+   refactor: simplify X logic
+   ```
+
+---
+
+## ⚠️ Failure Handling
+
+If an agent encounters:
+
+- Ambiguous requirement
+- Missing information
+- Conflicting instructions
+
+➡️ **STOP and ask for clarification**
+
+Never guess.
+
+---
+
+## ✅ Definition of Done
+
+A task is considered DONE when:
+
+- All acceptance criteria are met
+- Tests are written and passing
+- Code respects clean code principles
+- No unrelated changes are included

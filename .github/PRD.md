@@ -16,6 +16,7 @@ The product is intentionally minimal and opinionated.
 ## 2. Problem Statement
 
 The user:
+
 - Works on multiple ideas and projects
 - Struggles to maintain consistent execution
 - Lacks objective feedback on what produces results
@@ -28,12 +29,14 @@ Existing tools focus on tasks or planning, not execution quality and outcomes.
 ## 3. Goals & Success Criteria
 
 ### Goals
+
 - Enforce focus on a single active project
 - Make execution measurable and visible
 - Link time spent to concrete output and revenue
 - Improve weekly decision-making
 
 ### Success Criteria
+
 - Used daily for at least 7 consecutive days
 - User can answer: “What did I actually produce this week?”
 - Clear signal on whether a project should continue or stop
@@ -43,6 +46,7 @@ Existing tools focus on tasks or planning, not execution quality and outcomes.
 ## 4. User Personas
 
 ### Primary Persona
+
 - Solo developer
 - Building side projects / automation / SaaS
 - Time-constrained
@@ -54,6 +58,7 @@ Existing tools focus on tasks or planning, not execution quality and outcomes.
 ## 5. Core Concepts & Data Models
 
 ### Project
+
 - id
 - name
 - goal (text)
@@ -61,6 +66,7 @@ Existing tools focus on tasks or planning, not execution quality and outcomes.
 - isActive (boolean)
 
 ### DailyLog
+
 - id
 - date
 - projectId
@@ -75,17 +81,21 @@ Existing tools focus on tasks or planning, not execution quality and outcomes.
 ## 6. Functional Requirements (V1)
 
 ### 6.1 Project Management
+
 - Create a project
 - Activate / deactivate a project
 - Only one project can be active at a time
 
 ### 6.2 Daily Logging
+
 - Add one or more logs per day
 - Logs are editable on the same day
 - Logs are immutable after 24h (optional rule)
 
 ### 6.3 Metrics & Calculations
+
 Automatically compute:
+
 - Total time invested per project
 - Total revenue per project
 - Revenue per hour
@@ -93,7 +103,9 @@ Automatically compute:
 - Current execution streak (consecutive days with logs)
 
 ### 6.4 Execution Signals
+
 Display simple signals:
+
 - No log for 3 days on active project
 - High time investment with low output
 - Regular output but zero revenue
@@ -104,6 +116,7 @@ Display simple signals:
 ## 7. Dashboard Requirements
 
 Minimal dashboard showing:
+
 - Active project
 - Time spent this week
 - Last logged output
@@ -137,8 +150,9 @@ No charts required for V1.
 ## 10. Technical Considerations
 
 Suggested stack:
-- Backend: Node.js or .NET Minimal API
-- Database: SQLite
+
+- Backend: .NET Minimal API
+- Database: postgress
 - Frontend: Optional (simple web UI or none)
 - Deployment: Local or lightweight cloud
 

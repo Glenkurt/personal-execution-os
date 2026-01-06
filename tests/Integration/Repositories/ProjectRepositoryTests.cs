@@ -23,7 +23,7 @@ public class ProjectRepositoryTests : IAsyncLifetime
 
         _context = new ApplicationDbContext(options);
         await _context.Database.EnsureCreatedAsync();
-        
+
         var logger = new FakeLogger<ProjectRepository>();
         _repository = new ProjectRepository(_context, logger);
     }

@@ -16,18 +16,21 @@ Personal Execution OS is a minimal, opinionated personal productivity tracker fo
 ### Local Setup
 
 1. **Install dependencies:**
+
    ```bash
    dotnet restore
    ```
 
 2. **Configure PostgreSQL:**
-   
+
    Create a PostgreSQL database:
+
    ```sql
    CREATE DATABASE PersonalExecutionOS;
    ```
 
    Update connection string in `appsettings.json`:
+
    ```json
    {
      "ConnectionStrings": {
@@ -37,16 +40,19 @@ Personal Execution OS is a minimal, opinionated personal productivity tracker fo
    ```
 
 3. **Run database migrations:**
+
    ```bash
    dotnet ef database update
    ```
 
 4. **Build the project:**
+
    ```bash
    dotnet build
    ```
 
 5. **Run the application:**
+
    ```bash
    dotnet run
    ```
@@ -88,11 +94,13 @@ dotnet test
 ### Database Migrations
 
 Create a new migration:
+
 ```bash
 dotnet ef migrations add MigrationName
 ```
 
 Apply migrations:
+
 ```bash
 dotnet ef database update
 ```
@@ -112,4 +120,3 @@ dotnet ef database update
 ## License
 
 Personal use only.
-
