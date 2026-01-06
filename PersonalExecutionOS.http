@@ -1,0 +1,6 @@
+@PersonalExecutionOS_HostAddress = http://localhost:5296
+
+GET {{PersonalExecutionOS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
