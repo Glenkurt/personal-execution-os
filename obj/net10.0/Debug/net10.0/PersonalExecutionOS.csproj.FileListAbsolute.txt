@@ -568,3 +568,7 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/PersonalExecutionOS.pdb
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/PersonalExecutionOS.genruntimeconfig.cache
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/ref/PersonalExecutionOS.dll
+/Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/PersonalExecutionOS.staticwebassets.runtime.json
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/ur07thci1x-{0}-v8z80sfuro-v8z80sfuro.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/iftjjo9lyj-{0}-uqxw59ujsh-uqxw59ujsh.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/6sgpax79re-{0}-37f990ufyy-37f990ufyy.gz

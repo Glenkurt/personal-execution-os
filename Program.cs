@@ -41,8 +41,14 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
+// Serve static files (wwwroot)
+app.UseStaticFiles();
+
 // Map controllers
 app.MapControllers();
+
+// Serve index.html as default page
+app.MapGet("/", () => Results.File("wwwroot/index.html", "text/html"));
 
 // Health check endpoint
 app.MapGet("/health", () =>
