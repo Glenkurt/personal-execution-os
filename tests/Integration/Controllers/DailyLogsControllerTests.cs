@@ -87,7 +87,7 @@ public class DailyLogsControllerTests : IAsyncLifetime
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var createdProject = System.Text.Json.JsonSerializer.Deserialize<ProjectResponse>(
-                    content, 
+                    content,
                     new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 _projectId = createdProject!.Id;
             }

@@ -81,6 +81,7 @@ dotnet run
 ```
 
 The application will start at:
+
 - **HTTP**: `http://localhost:5000`
 - **Dashboard**: `http://localhost:5000/`
 
@@ -91,6 +92,7 @@ The application will start at:
 Open your browser to `http://localhost:5000/` to access the dashboard.
 
 #### Features
+
 - View active project
 - See execution metrics (time, revenue, streak)
 - View last logged activity
@@ -229,6 +231,7 @@ tests/
 ```
 
 **Test Summary**: 106 total tests covering:
+
 - Service business logic
 - API request validation
 - Database operations
@@ -364,12 +367,14 @@ psql PersonalExecutionOS < backup.sql
 ## Security Considerations
 
 1. **PostgreSQL**
+
    - Use strong passwords
    - Restrict network access
    - Enable SSL for connections
    - Regular backups
 
 2. **Application**
+
    - Enable HTTPS/SSL in production
    - Use environment variables for secrets
    - Keep .NET runtime updated
@@ -427,6 +432,7 @@ dotnet run --urls="http://localhost:5001"
 - **Caching**: In-memory (no distributed cache configured)
 
 For high-scale deployments:
+
 - Add Redis caching
 - Use database replication
 - Implement API rate limiting
@@ -435,6 +441,7 @@ For high-scale deployments:
 ## Support & Issues
 
 For issues:
+
 1. Check application logs: `dotnet run` outputs to console
 2. Check database logs: PostgreSQL logs
 3. Enable debug logging in `appsettings.Development.json`
@@ -448,6 +455,7 @@ For issues:
 ### V1.0.0 (2026-01-06)
 
 **Features**
+
 - Project creation and activation
 - Daily log tracking with time and revenue
 - Metrics calculation (time, revenue, streak)
@@ -456,12 +464,14 @@ For issues:
 - End-to-end workflow testing
 
 **Testing**
+
 - 106 integration and unit tests
 - Full workflow E2E test (7-day scenario)
 - Edge case coverage
 - All tests passing (0 failures)
 
 **Deployment**
+
 - Docker support
 - Systemd service configuration
 - Azure App Service compatible

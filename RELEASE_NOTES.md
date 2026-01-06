@@ -17,17 +17,20 @@ The system enforces focus on a single active project and provides real-time metr
 ### Core Features
 
 ✅ **Project Management**
+
 - Create projects with name, goal, and start date
 - Activate/deactivate projects (only one active at a time)
 - View all projects or get active project
 
 ✅ **Daily Execution Logging**
+
 - Log work with task description, output, time spent, and revenue
 - Organize logs by project and date
 - Query logs by date range
 - Update recent logs
 
 ✅ **Execution Metrics**
+
 - Total time invested (in minutes)
 - Total revenue generated
 - Revenue per hour (calculated)
@@ -35,6 +38,7 @@ The system enforces focus on a single active project and provides real-time metr
 - Current execution streak (consecutive days with logs)
 
 ✅ **Single-Page Dashboard**
+
 - View active project details
 - See key metrics at a glance
 - Display last activity
@@ -42,6 +46,7 @@ The system enforces focus on a single active project and provides real-time metr
 - Auto-refresh every 30 seconds
 
 ✅ **RESTful API**
+
 - 6 endpoints per resource (Projects, Daily Logs, Metrics)
 - Standard HTTP status codes
 - JSON request/response format
@@ -75,36 +80,36 @@ Personal Execution OS
 
 ### Projects (6 endpoints)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/projects` | Create new project |
-| GET | `/api/projects` | Get all projects |
-| GET | `/api/projects/{id}` | Get project by ID |
-| GET | `/api/projects/active/current` | Get active project |
-| PUT | `/api/projects/{id}` | Update project |
-| POST | `/api/projects/{id}/activate` | Activate project |
-| DELETE | `/api/projects/{id}` | Delete project |
+| Method | Endpoint                       | Description        |
+| ------ | ------------------------------ | ------------------ |
+| POST   | `/api/projects`                | Create new project |
+| GET    | `/api/projects`                | Get all projects   |
+| GET    | `/api/projects/{id}`           | Get project by ID  |
+| GET    | `/api/projects/active/current` | Get active project |
+| PUT    | `/api/projects/{id}`           | Update project     |
+| POST   | `/api/projects/{id}/activate`  | Activate project   |
+| DELETE | `/api/projects/{id}`           | Delete project     |
 
 ### Daily Logs (6 endpoints)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/dailylogs` | Create log entry |
-| GET | `/api/dailylogs/{id}` | Get log by ID |
-| GET | `/api/dailylogs/project/{projectId}` | Get project logs |
-| GET | `/api/dailylogs/project/{projectId}/range` | Get logs by date range |
-| PUT | `/api/dailylogs/{id}` | Update log entry |
-| DELETE | `/api/dailylogs/{id}` | Delete log entry |
+| Method | Endpoint                                   | Description            |
+| ------ | ------------------------------------------ | ---------------------- |
+| POST   | `/api/dailylogs`                           | Create log entry       |
+| GET    | `/api/dailylogs/{id}`                      | Get log by ID          |
+| GET    | `/api/dailylogs/project/{projectId}`       | Get project logs       |
+| GET    | `/api/dailylogs/project/{projectId}/range` | Get logs by date range |
+| PUT    | `/api/dailylogs/{id}`                      | Update log entry       |
+| DELETE | `/api/dailylogs/{id}`                      | Delete log entry       |
 
 ### Metrics (5 endpoints)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/metrics/{projectId}` | Get all metrics |
-| GET | `/api/metrics/{projectId}/time` | Get total time |
-| GET | `/api/metrics/{projectId}/revenue` | Get total revenue |
-| GET | `/api/metrics/{projectId}/revenue-per-hour` | Get revenue/hour |
-| GET | `/api/metrics/{projectId}/streak` | Get current streak |
+| Method | Endpoint                                    | Description        |
+| ------ | ------------------------------------------- | ------------------ |
+| GET    | `/api/metrics/{projectId}`                  | Get all metrics    |
+| GET    | `/api/metrics/{projectId}/time`             | Get total time     |
+| GET    | `/api/metrics/{projectId}/revenue`          | Get total revenue  |
+| GET    | `/api/metrics/{projectId}/revenue-per-hour` | Get revenue/hour   |
+| GET    | `/api/metrics/{projectId}/streak`           | Get current streak |
 
 ## Technology Stack
 
@@ -171,17 +176,19 @@ dotnet test --verbosity detailed
 ✅ Business rules (single active project)  
 ✅ Calculations (metrics, streaks)  
 ✅ Full 7-day workflow scenario  
-✅ Edge cases and error conditions  
+✅ Edge cases and error conditions
 
 ## Key Metrics
 
 ### Performance
+
 - **Response Time**: Average <100ms
 - **Database Query Time**: <50ms for most queries
 - **Concurrent Users**: Tested up to 1000
 - **Database Size**: Scales to millions of logs
 
 ### Reliability
+
 - **Uptime**: 99.9% (with proper hosting)
 - **Data Integrity**: ACID transactions
 - **Backup**: Automated daily recommended
@@ -215,7 +222,7 @@ These are planned for future releases.
 ✅ HTTPS-ready (configure in appsettings)  
 ✅ Error messages don't leak sensitive info  
 ✅ No hardcoded secrets  
-✅ Environment variable configuration  
+✅ Environment variable configuration
 
 ### Recommendations
 
@@ -250,6 +257,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for platform-specific instructions.
 ## What's Next (V2.0 Roadmap)
 
 ### Planned Features
+
 - [ ] Weekly summary reports
 - [ ] CSV/PDF export
 - [ ] Email notifications
@@ -262,6 +270,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for platform-specific instructions.
 - [ ] Zapier integrations
 
 ### Infrastructure
+
 - [ ] Monitoring and alerting
 - [ ] Advanced analytics
 - [ ] Performance optimizations
@@ -271,12 +280,14 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for platform-specific instructions.
 ## Support & Contributing
 
 ### Getting Help
+
 1. Check [DEPLOYMENT.md](DEPLOYMENT.md) troubleshooting section
 2. Review API endpoint documentation
 3. Check test files for usage examples
 4. Open an issue on GitHub
 
 ### Contributing
+
 - Fork the repository
 - Create a feature branch
 - Follow the code style in existing files
@@ -290,6 +301,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for platform-specific instructions.
 ## Credits
 
 Built with:
+
 - .NET Team for excellent framework
 - PostgreSQL community
 - xUnit testing framework
@@ -309,6 +321,7 @@ We'd love to hear how you use Personal Execution OS!
 ## Version History
 
 ### V1.0.0 (January 6, 2026) - Initial Release
+
 - Complete project management system
 - Daily execution logging
 - Real-time metrics calculation

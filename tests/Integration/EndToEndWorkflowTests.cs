@@ -246,7 +246,7 @@ public class EndToEndWorkflowTests : IAsyncLifetime
 
         // Log for today, yesterday, but NOT day before yesterday
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        
+
         await _client.PostAsJsonAsync("/api/dailylogs", new CreateDailyLogRequest
         {
             Date = today,
@@ -270,7 +270,7 @@ public class EndToEndWorkflowTests : IAsyncLifetime
         // Get metrics - streak should be 2 (today and yesterday)
         var metricsResponse = await _client.GetAsync($"/api/metrics/{project.Id}");
         var streakResponse = await _client.GetAsync($"/api/metrics/{project.Id}/streak");
-        
+
         Assert.Equal(HttpStatusCode.OK, streakResponse.StatusCode);
         // Streak should be 2 (today and yesterday, broken at day before yesterday)
     }

@@ -276,7 +276,7 @@ public class ProjectsControllerTests : IAsyncLifetime
 
         var createResponse = await _client!.PostAsJsonAsync("/api/projects", createRequest);
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
-        
+
         var createdProject = await createResponse.Content.ReadFromJsonAsync<ProjectResponse>();
         Assert.NotNull(createdProject);
         Assert.NotEqual(Guid.Empty, createdProject.Id);

@@ -1,166 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personal Execution OS - Dashboard</title>
-    <link rel="stylesheet" href="/css/dashboard.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
     <div class="container">
-        <header class="header">
-            <h1>Personal Execution OS</h1>
-            <p class="subtitle">Track execution, focus, and output</p>
-        </header>
+      <header class="header">
+        <h1>Personal Execution OS</h1>
+        <p class="subtitle">Track execution, focus, and output</p>
+      </header>
 
-        <main class="dashboard">
-            <!-- Loading State -->
-            <div id="loading" class="loading">
-                <p>Loading dashboard...</p>
+      <main class="dashboard">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+          <p>Loading dashboard...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error-banner hidden">
+          <p id="error-message"></p>
+          <button onclick="dismissError()">Dismiss</button>
+        </div>
+
+        <!-- Active Project Section -->
+        <section class="dashboard-section">
+          <h2>Active Project</h2>
+          <div id="active-project" class="project-card">
+            <div class="card-content">
+              <h3 id="project-name">No active project</h3>
+              <p id="project-goal" class="project-goal"></p>
+              <p id="project-dates" class="project-dates"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Metrics Grid -->
+        <section class="dashboard-section">
+          <h2>This Week's Metrics</h2>
+          <div class="metrics-grid">
+            <!-- Time Spent -->
+            <div class="metric-card">
+              <div class="metric-label">Time Spent This Week</div>
+              <div class="metric-value">
+                <span id="time-value">0</span>
+                <span class="metric-unit">minutes</span>
+              </div>
+              <div class="metric-detail" id="time-hours">0h 0m</div>
             </div>
 
-            <!-- Error State -->
-            <div id="error" class="error-banner hidden">
-                <p id="error-message"></p>
-                <button onclick="dismissError()">Dismiss</button>
+            <!-- Total Revenue -->
+            <div class="metric-card">
+              <div class="metric-label">Total Revenue</div>
+              <div class="metric-value">
+                $<span id="revenue-value">0.00</span>
+              </div>
+              <div class="metric-detail" id="revenue-per-hour-detail">
+                $0.00/hr
+              </div>
             </div>
 
-            <!-- Active Project Section -->
-            <section class="dashboard-section">
-                <h2>Active Project</h2>
-                <div id="active-project" class="project-card">
-                    <div class="card-content">
-                        <h3 id="project-name">No active project</h3>
-                        <p id="project-goal" class="project-goal"></p>
-                        <p id="project-dates" class="project-dates"></p>
-                    </div>
-                </div>
-            </section>
+            <!-- Days Worked -->
+            <div class="metric-card">
+              <div class="metric-label">Days Worked</div>
+              <div class="metric-value" id="days-worked">0</div>
+              <div class="metric-detail">distinct days</div>
+            </div>
 
-            <!-- Metrics Grid -->
-            <section class="dashboard-section">
-                <h2>This Week's Metrics</h2>
-                <div class="metrics-grid">
-                    <!-- Time Spent -->
-                    <div class="metric-card">
-                        <div class="metric-label">Time Spent This Week</div>
-                        <div class="metric-value">
-                            <span id="time-value">0</span>
-                            <span class="metric-unit">minutes</span>
-                        </div>
-                        <div class="metric-detail" id="time-hours">0h 0m</div>
-                    </div>
+            <!-- Current Streak -->
+            <div class="metric-card">
+              <div class="metric-label">Execution Streak</div>
+              <div class="metric-value streak-card">
+                <span id="streak-value">0</span>
+                <span class="streak-icon" id="streak-icon"></span>
+              </div>
+              <div class="metric-detail">consecutive days</div>
+            </div>
+          </div>
+        </section>
 
-                    <!-- Total Revenue -->
-                    <div class="metric-card">
-                        <div class="metric-label">Total Revenue</div>
-                        <div class="metric-value">
-                            $<span id="revenue-value">0.00</span>
-                        </div>
-                        <div class="metric-detail" id="revenue-per-hour-detail">$0.00/hr</div>
-                    </div>
+        <!-- Last Activity Section -->
+        <section class="dashboard-section">
+          <h2>Last Activity</h2>
+          <div id="last-activity" class="activity-card">
+            <div class="no-activity">No logs recorded yet</div>
+          </div>
+        </section>
 
-                    <!-- Days Worked -->
-                    <div class="metric-card">
-                        <div class="metric-label">Days Worked</div>
-                        <div class="metric-value" id="days-worked">0</div>
-                        <div class="metric-detail">distinct days</div>
-                    </div>
-
-                    <!-- Current Streak -->
-                    <div class="metric-card">
-                        <div class="metric-label">Execution Streak</div>
-                        <div class="metric-value streak-card">
-                            <span id="streak-value">0</span>
-                            <span class="streak-icon" id="streak-icon"></span>
-                        </div>
-                        <div class="metric-detail">consecutive days</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Last Activity Section -->
-            <section class="dashboard-section">
-                <h2>Last Activity</h2>
-                <div id="last-activity" class="activity-card">
-                    <div class="no-activity">No logs recorded yet</div>
-                </div>
-            </section>
-
-            <!-- Quick Links -->
-            <section class="dashboard-section">
-                <h2>Actions</h2>
-                <div class="actions">
-                    <button onclick="refreshDashboard()" class="btn btn-primary">↻ Refresh</button>
-                    <button onclick="openNewLogModal()" class="btn btn-secondary">+ Log Work</button>
-                    <button onclick="openProjectModal()" class="btn btn-secondary">+ New Project</button>
-                </div>
-            </section>
-        </main>
+        <!-- Quick Links -->
+        <section class="dashboard-section">
+          <h2>Actions</h2>
+          <div class="actions">
+            <button onclick="refreshDashboard()" class="btn btn-primary">
+              ↻ Refresh
+            </button>
+            <button onclick="openNewLogModal()" class="btn btn-secondary">
+              + Log Work
+            </button>
+            <button onclick="openProjectModal()" class="btn btn-secondary">
+              + New Project
+            </button>
+          </div>
+        </section>
+      </main>
     </div>
 
     <!-- New Project Modal -->
     <div id="project-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Create New Project</h2>
-                <button onclick="closeProjectModal()" class="modal-close">&times;</button>
-            </div>
-            <form onsubmit="handleCreateProject(event)">
-                <div class="form-group">
-                    <label for="project-name-input">Project Name *</label>
-                    <input type="text" id="project-name-input" maxlength="100" required>
-                </div>
-                <div class="form-group">
-                    <label for="project-goal-input">Goal (optional)</label>
-                    <textarea id="project-goal-input" maxlength="500" rows="3"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" onclick="closeProjectModal()" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Project</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Create New Project</h2>
+          <button onclick="closeProjectModal()" class="modal-close">
+            &times;
+          </button>
         </div>
+        <form onsubmit="handleCreateProject(event)">
+          <div class="form-group">
+            <label for="project-name-input">Project Name *</label>
+            <input
+              type="text"
+              id="project-name-input"
+              maxlength="100"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="project-goal-input">Goal (optional)</label>
+            <textarea
+              id="project-goal-input"
+              maxlength="500"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              onclick="closeProjectModal()"
+              class="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Create Project
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- New Log Modal -->
     <div id="log-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Log Work</h2>
-                <button onclick="closeLogModal()" class="modal-close">&times;</button>
-            </div>
-            <form onsubmit="handleCreateLog(event)">
-                <div class="form-group">
-                    <label for="log-task-input">Task Description *</label>
-                    <input type="text" id="log-task-input" maxlength="500" required>
-                </div>
-                <div class="form-group">
-                    <label for="log-output-input">Output Description *</label>
-                    <textarea id="log-output-input" maxlength="1000" rows="3" required></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="log-time-input">Time Spent (minutes) *</label>
-                        <input type="number" id="log-time-input" min="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="log-revenue-input">Revenue ($)</label>
-                        <input type="number" id="log-revenue-input" min="0" step="0.01" value="0">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="log-note-input">Note (optional)</label>
-                    <textarea id="log-note-input" maxlength="500" rows="2"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" onclick="closeLogModal()" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Log Work</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Log Work</h2>
+          <button onclick="closeLogModal()" class="modal-close">&times;</button>
         </div>
+        <form onsubmit="handleCreateLog(event)">
+          <div class="form-group">
+            <label for="log-task-input">Task Description *</label>
+            <input type="text" id="log-task-input" maxlength="500" required />
+          </div>
+          <div class="form-group">
+            <label for="log-output-input">Output Description *</label>
+            <textarea
+              id="log-output-input"
+              maxlength="1000"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="log-time-input">Time Spent (minutes) *</label>
+              <input type="number" id="log-time-input" min="1" required />
+            </div>
+            <div class="form-group">
+              <label for="log-revenue-input">Revenue ($)</label>
+              <input
+                type="number"
+                id="log-revenue-input"
+                min="0"
+                step="0.01"
+                value="0"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="log-note-input">Note (optional)</label>
+            <textarea id="log-note-input" maxlength="500" rows="2"></textarea>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              onclick="closeLogModal()"
+              class="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Log Work</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="/js/dashboard.js"></script>
-</body>
+  </body>
 </html>
