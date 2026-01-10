@@ -2,11 +2,9 @@
 
 # Stage 1: Build Angular frontend
 FROM node:20 AS node-build
-WORKDIR /src/angular
-COPY angular-app/package*.json ./
-RUN npm ci --silent
-COPY angular-app ./
-RUN npm run build -- --configuration=production --outputPath=dist
+WORKDIR /src
+COPY angular-app ./angular-app
+RUN cd angular-app && npm ci --silent && npm run build -- --configuration=production
 
 # Stage 2: Build .NET API
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS dotnet-build
@@ -16,8 +14,8 @@ COPY PersonalExecutionOS.csproj ./
 RUN dotnet restore ./PersonalExecutionOS.csproj
 
 COPY . ./
-# Copy Angular build artifacts into wwwroot so they're served by ASP.NET
-COPY --from=node-build /src/angular/dist ./wwwroot
+# Copy Angular build artifacts - output is already configured to wwwroot in angular.json
+COPY --from=node-build /src/wwwroot ./wwwroot
 
 RUN dotnet publish ./PersonalExecutionOS.csproj -c Release -o /app/publish --no-restore
 
