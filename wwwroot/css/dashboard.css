@@ -137,6 +137,57 @@ html, body {
     margin: 0;
 }
 
+/* =========================================================================
+   Projects List
+   ========================================================================= */
+
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.project-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+}
+
+.project-list-item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.project-list-item-meta {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.project-list-item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.project-list-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.project-active-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
 /* ============================================================================
    Metrics Grid
    ============================================================================ */

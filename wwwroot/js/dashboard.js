@@ -9,6 +9,7 @@ const ENDPOINTS = {
   getActiveProject: `${API_BASE}/projects/active/current`,
   getProjects: `${API_BASE}/projects`,
   createProject: `${API_BASE}/projects`,
+  activateProject: (projectId) => `${API_BASE}/projects/${projectId}/activate`,
   getMetrics: (projectId) => `${API_BASE}/metrics/${projectId}`,
   getDailyLogs: (projectId) => `${API_BASE}/dailylogs/project/${projectId}`,
   createDailyLog: `${API_BASE}/dailylogs`,
@@ -42,8 +43,11 @@ async function refreshDashboard() {
     // Fetch active project
     await fetchActiveProject();
 
+    // Fetch all projects (for selector list)
+    await fetchProjects();
+
     // Fetch metrics if project exists
-    if (currentActiveProject) {
+    if (currentActiveProject && currentActiveProject.id) {
       await fetchMetrics(currentActiveProject.id);
       await fetchLastActivity(currentActiveProject.id);
     } else {
@@ -71,23 +75,52 @@ async function fetchActiveProject() {
       throw new Error(`Failed to fetch active project: ${response.statusText}`);
     }
 
-    currentActiveProject = await response.json();
-    displayActiveProject(currentActiveProject);
+    const apiProject = await response.json();
+    currentActiveProject = normalizeProject(apiProject);
+    if (currentActiveProject && currentActiveProject.id) {
+      displayActiveProject(currentActiveProject);
+    } else {
+      currentActiveProject = null;
+    }
   } catch (error) {
     console.error("Error fetching active project:", error);
     currentActiveProject = null;
   }
 }
 
+async function fetchProjects() {
+  try {
+    const response = await fetch(ENDPOINTS.getProjects);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch projects: ${response.statusText}`);
+    }
+
+    const apiProjects = await response.json();
+    const projects = Array.isArray(apiProjects)
+      ? apiProjects.map(normalizeProject).filter((p) => p && p.id)
+      : [];
+
+    displayProjects(projects);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
+}
+
 async function fetchMetrics(projectId) {
   try {
+    if (!projectId) {
+      return;
+    }
+
     const response = await fetch(ENDPOINTS.getMetrics(projectId));
 
     if (!response.ok) {
       throw new Error(`Failed to fetch metrics: ${response.statusText}`);
     }
 
-    currentMetrics = await response.json();
+    const apiMetrics = await response.json();
+    currentMetrics = normalizeMetrics(apiMetrics);
     displayMetrics(currentMetrics);
   } catch (error) {
     console.error("Error fetching metrics:", error);
@@ -97,6 +130,10 @@ async function fetchMetrics(projectId) {
 
 async function fetchLastActivity(projectId) {
   try {
+    if (!projectId) {
+      return;
+    }
+
     // Get logs for this week
     const today = new Date();
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -112,7 +149,11 @@ async function fetchLastActivity(projectId) {
       throw new Error(`Failed to fetch logs: ${response.statusText}`);
     }
 
-    const logs = await response.json();
+    const apiLogs = await response.json();
+    const logs = Array.isArray(apiLogs)
+      ? apiLogs.map(normalizeDailyLog).filter((l) => l && l.id)
+      : [];
+
     if (logs && logs.length > 0) {
       displayLastActivity(logs[logs.length - 1]);
     } else {
@@ -142,6 +183,64 @@ function displayActiveProject(project) {
     day: "numeric",
   });
   datesEl.textContent = `Started: ${startDate}`;
+}
+
+function displayProjects(projects) {
+  const list = document.getElementById("projects-list");
+
+  if (!list) {
+    return;
+  }
+
+  if (!projects || projects.length === 0) {
+    list.innerHTML = '<div class="no-activity">No projects yet</div>';
+    return;
+  }
+
+  const rows = projects
+    .slice()
+    .sort((a, b) => {
+      if (a.isActive === b.isActive) {
+        return a.name.localeCompare(b.name);
+      }
+      return a.isActive ? -1 : 1;
+    })
+    .map((p) => {
+      const activeBadge = p.isActive
+        ? '<span class="project-active-badge">ACTIVE</span>'
+        : "";
+      const activateButton = p.isActive
+        ? '<button class="btn btn-secondary" disabled>Active</button>'
+        : `<button class="btn btn-secondary activate-project-btn" data-project-id="${escapeHtml(
+            p.id
+          )}">Activate</button>`;
+
+      const goal = p.goal ? escapeHtml(p.goal) : "No goal";
+      return `
+        <div class="project-list-item">
+          <div class="project-list-item-left">
+            <div class="project-list-item-name">${escapeHtml(p.name)}</div>
+            <div class="project-list-item-meta">${goal}</div>
+          </div>
+          <div class="project-list-item-actions">
+            ${activeBadge}
+            ${activateButton}
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  list.innerHTML = rows;
+
+  list.querySelectorAll(".activate-project-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      const projectId = button.dataset.projectId;
+      activateProject(projectId);
+    });
+  });
+
+  list.innerHTML = rows;
 }
 
 function displayNoActiveProject() {
@@ -389,6 +488,100 @@ async function handleCreateLog(event) {
       throw new Error(error.error || "Failed to create log");
     }
 
+    // ============================================================================
+    // Data Normalizers & Actions
+    // ============================================================================
+
+    function normalizeProject(apiProject) {
+      if (!apiProject) {
+        return null;
+      }
+
+      return {
+        id: apiProject.Id ?? apiProject.id ?? null,
+        name: apiProject.Name ?? apiProject.name ?? "",
+        goal: apiProject.Goal ?? apiProject.goal ?? null,
+        startDate: apiProject.StartDate ?? apiProject.startDate ?? null,
+        isActive:
+          typeof apiProject.IsActive === "boolean"
+            ? apiProject.IsActive
+            : typeof apiProject.isActive === "boolean"
+            ? apiProject.isActive
+            : false,
+      };
+    }
+
+    function normalizeMetrics(apiMetrics) {
+      if (!apiMetrics) {
+        return {
+          totalTimeMinutes: 0,
+          totalRevenue: 0,
+          revenuePerHour: 0,
+          daysWorked: 0,
+          currentStreak: 0,
+        };
+      }
+
+      return {
+        totalTimeMinutes: apiMetrics.TotalTimeMinutes ?? apiMetrics.totalTimeMinutes ?? 0,
+        totalRevenue: apiMetrics.TotalRevenue ?? apiMetrics.totalRevenue ?? 0,
+        revenuePerHour: apiMetrics.RevenuePerHour ?? apiMetrics.revenuePerHour ?? 0,
+        daysWorked: apiMetrics.DaysWorked ?? apiMetrics.daysWorked ?? 0,
+        currentStreak: apiMetrics.CurrentStreak ?? apiMetrics.currentStreak ?? 0,
+      };
+    }
+
+    function normalizeDailyLog(apiLog) {
+      if (!apiLog) {
+        return null;
+      }
+
+      return {
+        id: apiLog.Id ?? apiLog.id ?? null,
+        date: apiLog.Date ?? apiLog.date ?? null,
+        taskDescription: apiLog.TaskDescription ?? apiLog.taskDescription ?? "",
+        outputDescription: apiLog.OutputDescription ?? apiLog.outputDescription ?? "",
+        timeSpentMinutes: apiLog.TimeSpentMinutes ?? apiLog.timeSpentMinutes ?? 0,
+        revenueGenerated: apiLog.RevenueGenerated ?? apiLog.revenueGenerated ?? 0,
+      };
+    }
+
+    async function activateProject(projectId) {
+      if (!projectId) {
+        showError("Invalid project selected");
+        return;
+      }
+
+      try {
+        const response = await fetch(ENDPOINTS.activateProject(projectId), {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => null);
+          throw new Error(error?.error || "Failed to activate project");
+        }
+
+        await refreshDashboard();
+      } catch (error) {
+        console.error("Error activating project:", error);
+        showError(`Failed to activate project: ${error.message}`);
+      }
+    }
+
+    function escapeHtml(value) {
+      if (!value) {
+        return "";
+      }
+
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
     closeLogModal();
     await refreshDashboard();
   } catch (error) {
@@ -407,6 +600,123 @@ function formatDateForAPI(date) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+// ============================================================================
+// Project Activation
+// ============================================================================
+
+async function activateProject(projectId) {
+  try {
+    if (!projectId) {
+      showError("Project ID is missing");
+      return;
+    }
+
+    const response = await fetch(ENDPOINTS.activateProject(projectId), {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      let message = "Failed to activate project";
+      try {
+        const error = await response.json();
+        message = error.error || message;
+      } catch {
+        // ignore
+      }
+      throw new Error(message);
+    }
+
+    await refreshDashboard();
+  } catch (error) {
+    console.error("Error activating project:", error);
+    showError(`Failed to activate project: ${error.message}`);
+  }
+}
+
+// ============================================================================
+// API Response Normalization (PascalCase/camelCase tolerant)
+// ============================================================================
+
+function pick(obj, pascalKey, camelKey) {
+  if (!obj || typeof obj !== "object") {
+    return undefined;
+  }
+  if (obj[pascalKey] !== undefined) {
+    return obj[pascalKey];
+  }
+  if (obj[camelKey] !== undefined) {
+    return obj[camelKey];
+  }
+  return undefined;
+}
+
+function normalizeProject(apiProject) {
+  if (!apiProject || typeof apiProject !== "object") {
+    return null;
+  }
+
+  return {
+    id: pick(apiProject, "Id", "id"),
+    name: pick(apiProject, "Name", "name"),
+    goal: pick(apiProject, "Goal", "goal"),
+    startDate: pick(apiProject, "StartDate", "startDate"),
+    isActive: Boolean(pick(apiProject, "IsActive", "isActive")),
+    createdAt: pick(apiProject, "CreatedAt", "createdAt"),
+  };
+}
+
+function normalizeMetrics(apiMetrics) {
+  if (!apiMetrics || typeof apiMetrics !== "object") {
+    return null;
+  }
+
+  return {
+    projectId: pick(apiMetrics, "ProjectId", "projectId"),
+    totalTimeMinutes: Number(
+      pick(apiMetrics, "TotalTimeMinutes", "totalTimeMinutes") || 0
+    ),
+    totalRevenue: Number(pick(apiMetrics, "TotalRevenue", "totalRevenue") || 0),
+    revenuePerHour: Number(
+      pick(apiMetrics, "RevenuePerHour", "revenuePerHour") || 0
+    ),
+    daysWorked: Number(pick(apiMetrics, "DaysWorked", "daysWorked") || 0),
+    currentStreak: Number(
+      pick(apiMetrics, "CurrentStreak", "currentStreak") || 0
+    ),
+  };
+}
+
+function normalizeDailyLog(apiLog) {
+  if (!apiLog || typeof apiLog !== "object") {
+    return null;
+  }
+
+  return {
+    id: pick(apiLog, "Id", "id"),
+    date: pick(apiLog, "Date", "date"),
+    projectId: pick(apiLog, "ProjectId", "projectId"),
+    taskDescription: pick(apiLog, "TaskDescription", "taskDescription"),
+    timeSpentMinutes: Number(
+      pick(apiLog, "TimeSpentMinutes", "timeSpentMinutes") || 0
+    ),
+    outputDescription: pick(apiLog, "OutputDescription", "outputDescription"),
+    revenueGenerated: Number(
+      pick(apiLog, "RevenueGenerated", "revenueGenerated") || 0
+    ),
+    note: pick(apiLog, "Note", "note"),
+    createdAt: pick(apiLog, "CreatedAt", "createdAt"),
+  };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 // For debugging

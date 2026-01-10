@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using PersonalExecutionOS.Infrastructure.Data;
 
 namespace PersonalExecutionOS;
@@ -14,7 +15,18 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-        var connectionString = "Host=localhost;Port=5432;Database=PersonalExecutionOS;Username=postgres;Password=postgres";
+        var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+            .AddEnvironmentVariables()
+            .AddCommandLine(args)
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("PostgresConnection")
+            ?? "Host=localhost;Port=5432;Database=PersonalExecutionOS;Username=postgres;Password=postgres";
         optionsBuilder.UseNpgsql(connectionString);
 
         return new ApplicationDbContext(optionsBuilder.Options);

@@ -48,6 +48,7 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/appsettings.Development.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/appsettings.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/MvcTestingAppManifest.json
+/Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/PersonalExecutionOS.staticwebassets.runtime.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/PersonalExecutionOS.staticwebassets.endpoints.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/xunit.runner.visualstudio.testadapter.dll
 /Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/PersonalExecutionOS
@@ -557,6 +558,9 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/rjsmrazor.dswa.cache.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/rjsmcshtml.dswa.cache.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/scopedcss/bundle/PersonalExecutionOS.styles.css
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/ur07thci1x-{0}-ecvkrzgiw6-ecvkrzgiw6.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/iftjjo9lyj-{0}-bf4yvjjm6l-bf4yvjjm6l.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/6sgpax79re-{0}-am2juk3mee-am2juk3mee.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/staticwebassets.build.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/staticwebassets.build.json.cache
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/staticwebassets.development.json
@@ -568,7 +572,3 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/PersonalExecutionOS.pdb
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/PersonalExecutionOS.genruntimeconfig.cache
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/ref/PersonalExecutionOS.dll
-/Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/PersonalExecutionOS.staticwebassets.runtime.json
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/ur07thci1x-{0}-v8z80sfuro-v8z80sfuro.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/iftjjo9lyj-{0}-uqxw59ujsh-uqxw59ujsh.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/6sgpax79re-{0}-37f990ufyy-37f990ufyy.gz

@@ -8,6 +8,9 @@ using PersonalExecutionOS.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var useHttpsRedirection = builder.Configuration.GetValue("UseHttpsRedirection", true);
+var applyMigrationsOnStartup = builder.Configuration.GetValue("ApplyMigrationsOnStartup", false);
+
 // Configure Database - only add Postgres if not in test environment
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -39,16 +42,29 @@ var app = builder.Build();
 // Use global exception handler middleware
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
-app.UseHttpsRedirection();
+if (applyMigrationsOnStartup && !app.Environment.IsEnvironment("Testing"))
+{
+    app.Logger.LogInformation("ApplyMigrationsOnStartup enabled. Applying EF Core migrations...");
+
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+
+    app.Logger.LogInformation("EF Core migrations applied successfully.");
+}
+
+if (useHttpsRedirection)
+{
+    app.UseHttpsRedirection();
+}
 
 // Serve static files (wwwroot)
+// UseDefaultFiles enables serving / as /index.html
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 // Map controllers
 app.MapControllers();
-
-// Serve index.html as default page
-app.MapGet("/", () => Results.File("wwwroot/index.html", "text/html"));
 
 // Health check endpoint
 app.MapGet("/health", () =>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PersonalExecutionOS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f87cdd9c382ff6f9f4efd49c9c4b682a9ca4d6e3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41bfa63383473f87b2fc4abd99d766c7ad98b85f")]
 [assembly: System.Reflection.AssemblyProductAttribute("PersonalExecutionOS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PersonalExecutionOS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

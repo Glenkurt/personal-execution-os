@@ -244,29 +244,39 @@ All tests pass successfully with zero failures.
 
 ### Option 1: Docker
 
-Create `Dockerfile`:
+This repo includes a `Dockerfile` and `docker-compose.yml`.
 
-```dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /app
-COPY . .
-RUN dotnet publish -c Release -o out
-
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
-WORKDIR /app
-COPY --from=build /app/out .
-EXPOSE 80
-ENTRYPOINT ["dotnet", "PersonalExecutionOS.dll"]
-```
-
-Build and run:
+#### 1. Start PostgreSQL
 
 ```bash
-docker build -t personal-execution-os .
-docker run -p 80:80 \
-  -e ConnectionStrings__PostgresConnection="..." \
-  personal-execution-os
+docker compose up -d db
 ```
+
+If you previously started a container with `--name postgres` and see a conflict, remove it with:
+
+```bash
+docker rm -f postgres
+```
+
+#### 2. Apply EF Core migrations (recommended explicit step)
+
+Run migrations from your host machine against the containerized Postgres:
+
+```bash
+ConnectionStrings__PostgresConnection="Host=localhost;Port=5432;Database=PersonalExecutionOS;Username=postgres;Password=postgres" \
+  dotnet ef database update
+```
+
+#### 3. Build + run the app container
+
+```bash
+docker compose up -d --build app
+```
+
+Open:
+
+- Dashboard: `http://localhost:8080/`
+- Health: `http://localhost:8080/health`
 
 ### Option 2: Direct Server Deployment
 
@@ -385,6 +395,66 @@ psql PersonalExecutionOS < backup.sql
    - Validate all inputs
    - Use HTTPS only
    - Consider adding authentication for multi-user deployments
+
+## Dashboard & JSON Contract
+
+### API JSON Format (Important for Frontend)
+
+The API returns responses in **PascalCase** property names because `Program.cs` configures:
+
+```csharp
+.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null; // Returns PascalCase
+})
+```
+
+**Example API response:**
+
+```json
+{
+  "Id": "550e8400-e29b-41d4-a716-446655440000",
+  "Name": "My Project",
+  "IsActive": true,
+  "TotalTimeMinutes": 120,
+  "TaskDescription": "Built feature X"
+}
+```
+
+The dashboard JavaScript handles this via a **normalization layer** that:
+
+- Accepts PascalCase JSON from the API (e.g., `Id`, `Name`, `TotalTimeMinutes`)
+- Also tolerates camelCase (e.g., `id`, `name`, `totalTimeMinutes`)
+- Maps everything to camelCase internally for consistency
+
+See `wwwroot/js/dashboard.js` for `normalizeProject()`, `normalizeMetrics()`, and `normalizeDailyLog()`.
+
+### Dashboard Network Requests with `undefined`
+
+If you see requests like:
+
+```
+GET /api/metrics/undefined → 404
+GET /api/dailylogs/project/undefined/range... → 404
+```
+
+**This indicates the JSON mapping is broken.** The dashboard could not extract the project ID.
+
+**Root causes:**
+
+1. API returns camelCase instead of PascalCase
+2. JSON property name has a typo (e.g., `ProjectID` vs `ProjectId`)
+3. Project object is `null` or missing `Id` property entirely
+
+**To diagnose:**
+
+1. Open browser DevTools (F12)
+2. Go to the "Network" tab
+3. Refresh the dashboard
+4. Look for `undefined` URLs
+5. Click on the active project endpoint (e.g., `/api/projects/active/current`)
+6. Check the "Response" tab — verify the JSON has `"Id": "..."` and `"IsActive": true|false`
+7. Check the console tab for JavaScript errors
 
 ## Troubleshooting
 

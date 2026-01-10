@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15
+    container_name: personal-execution-os-db
+    environment:
+      POSTGRES_DB: PersonalExecutionOS
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d PersonalExecutionOS"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personal-execution-os-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      UseHttpsRedirection: "false"
+      ApplyMigrationsOnStartup: "true"
+      ConnectionStrings__PostgresConnection: Host=db;Port=5432;Database=PersonalExecutionOS;Username=postgres;Password=postgres
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres-data:
