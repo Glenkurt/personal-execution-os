@@ -6,6 +6,19 @@ using PersonalExecutionOS.Core.Models;
 namespace PersonalExecutionOS.API.Controllers;
 
 /// <summary>
+/// Dashboard metrics summary response DTO.
+/// </summary>
+public record MetricsSummaryResponse(
+    int total_projects,
+    int active_projects,
+    int total_time_hours,
+    decimal total_revenue,
+    decimal average_hourly_rate,
+    int current_streak_days,
+    int longest_streak_days,
+    DateTime? last_activity_date);
+
+/// <summary>
 /// API controller for retrieving project metrics.
 /// </summary>
 [ApiController]
@@ -220,6 +233,39 @@ public class MetricsController : ControllerBase
 
         _logger.LogInformation("Retrieved current streak for project {ProjectId}: {Streak} days", projectId, streakResult.Value);
         return Ok(new IntValueResponse(streakResult.Value));
+    }
+
+    /// <summary>
+    /// Retrieves aggregated dashboard metrics summary across all projects.
+    /// </summary>
+    /// <param name="ct">Cancellation token</param>
+    /// <returns>Aggregated metrics summary</returns>
+    [HttpGet("dashboard/summary")]
+    [ProducesResponseType(typeof(MetricsSummaryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<MetricsSummaryResponse>> GetDashboardSummaryAsync(CancellationToken ct)
+    {
+        var result = await _metricsService.GetDashboardSummaryAsync(ct);
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogError("Failed to get dashboard summary: {Error}", result.Error);
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { error = result.Error ?? "Failed to retrieve dashboard metrics" });
+        }
+
+        var summary = result.Value!;
+        var response = new MetricsSummaryResponse(
+            total_projects: summary.TotalProjects,
+            active_projects: summary.ActiveProjects,
+            total_time_hours: summary.TotalHours,
+            total_revenue: summary.TotalRevenue,
+            average_hourly_rate: summary.AverageHourlyRate,
+            current_streak_days: summary.CurrentStreakDays,
+            longest_streak_days: summary.LongestStreakDays,
+            last_activity_date: summary.LastActivityDate);
+
+        return Ok(response);
     }
 
     #region Response Mapping

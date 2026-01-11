@@ -362,4 +362,80 @@ public class DailyLogsController : ControllerBase
             CreatedAt = log.CreatedAt
         };
     }
+
+    /// <summary>
+    /// Retrieves all daily logs with optional sorting and limiting.
+    /// </summary>
+    /// <param name="limit">Maximum number of logs to return (default: 50, max: 500)</param>
+    /// <param name="sortBy">Sort field: date, project, time (default: date)</param>
+    /// <param name="sortOrder">Sort order: asc, desc (default: desc)</param>
+    /// <param name="ct">Cancellation token</param>
+    /// <returns>Array of daily logs</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<DailyLogResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<DailyLogResponse>>> GetAllLogsAsync(
+        [FromQuery] int limit = 50,
+        [FromQuery] string sortBy = "date",
+        [FromQuery] string sortOrder = "desc",
+        CancellationToken ct = default)
+    {
+        // Validate parameters
+        if (limit <= 0 || limit > 500)
+        {
+            _logger.LogWarning("Invalid limit parameter: {Limit}", limit);
+            return BadRequest(new { error = "Limit must be between 1 and 500" });
+        }
+
+        var validSortFields = new[] { "date", "project", "time" };
+        if (!validSortFields.Contains(sortBy.ToLower()))
+        {
+            _logger.LogWarning("Invalid sortBy parameter: {SortBy}", sortBy);
+            return BadRequest(new { error = "SortBy must be one of: date, project, time" });
+        }
+
+        var validSortOrders = new[] { "asc", "desc" };
+        if (!validSortOrders.Contains(sortOrder.ToLower()))
+        {
+            _logger.LogWarning("Invalid sortOrder parameter: {SortOrder}", sortOrder);
+            return BadRequest(new { error = "SortOrder must be asc or desc" });
+        }
+
+        var descending = sortOrder.ToLower() == "desc";
+        var result = await _dailyLogRepository.GetAllAsync(limit, sortBy, descending, ct);
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogError("Failed to get all daily logs: {Error}", result.Error);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { error = result.Error ?? "Failed to retrieve daily logs" });
+        }
+
+        var responses = result.Value!
+            .Select(log => MapToResponse(log))
+            .ToList();
+
+        _logger.LogInformation("Retrieved {Count} daily logs", responses.Count);
+        return Ok(responses);
+    }
+
+    /// <summary>
+    /// Maps a DailyLog model to a DailyLogResponse DTO.
+    /// </summary>
+    private static DailyLogResponse MapToResponse(DailyLog log)
+    {
+        return new DailyLogResponse
+        {
+            Id = log.Id,
+            Date = log.Date,
+            ProjectId = log.ProjectId,
+            TaskDescription = log.TaskDescription,
+            TimeSpentMinutes = log.TimeSpentMinutes,
+            OutputDescription = log.OutputDescription,
+            RevenueGenerated = log.RevenueGenerated,
+            Note = log.Note,
+            CreatedAt = log.CreatedAt
+        };
+    }
 }

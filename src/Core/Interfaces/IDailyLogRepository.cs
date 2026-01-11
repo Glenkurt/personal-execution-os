@@ -37,4 +37,13 @@ public interface IDailyLogRepository
     /// Update an existing daily log (only within 24h of creation).
     /// </summary>
     Task<ServiceResult<DailyLog>> UpdateAsync(DailyLog log, CancellationToken ct = default);
+
+    /// <summary>
+    /// Retrieve all daily logs with optional sorting and limit.
+    /// </summary>
+    Task<ServiceResult<IEnumerable<DailyLog>>> GetAllAsync(
+        int limit = 50,
+        string sortBy = "date",
+        bool descending = true,
+        CancellationToken ct = default);
 }

@@ -179,4 +179,50 @@ public class DailyLogRepository : IDailyLogRepository
             return ServiceResult<DailyLog>.Failure($"Failed to update daily log: {ex.Message}");
         }
     }
+
+    public async Task<ServiceResult<IEnumerable<DailyLog>>> GetAllAsync(
+        int limit = 50,
+        string sortBy = "date",
+        bool descending = true,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            // Validate parameters
+            if (limit <= 0 || limit > 500)
+            {
+                limit = Math.Clamp(limit, 1, 500);
+            }
+
+            var validSortFields = new[] { "date", "project", "time" };
+            if (!validSortFields.Contains(sortBy.ToLower()))
+            {
+                sortBy = "date";
+            }
+
+            IQueryable<DailyLog> query = _context.DailyLogs;
+
+            // Apply sorting
+            query = sortBy.ToLower() switch
+            {
+                "date" => descending ? query.OrderByDescending(l => l.Date) : query.OrderBy(l => l.Date),
+                "project" => descending ? query.OrderByDescending(l => l.ProjectId) : query.OrderBy(l => l.ProjectId),
+                "time" => descending ? query.OrderByDescending(l => l.TimeSpentMinutes) : query.OrderBy(l => l.TimeSpentMinutes),
+                _ => query.OrderByDescending(l => l.Date)
+            };
+
+            // Apply limit and fetch
+            var logs = await query.Take(limit).ToListAsync(ct);
+
+            _logger.LogInformation("Retrieved all daily logs: {Count} records with sort={SortBy}, order={Order}", 
+                logs.Count, sortBy, descending ? "desc" : "asc");
+
+            return ServiceResult<IEnumerable<DailyLog>>.Success(logs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving all daily logs");
+            return ServiceResult<IEnumerable<DailyLog>>.Failure($"Failed to retrieve daily logs: {ex.Message}");
+        }
+    }
 }

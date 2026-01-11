@@ -38,7 +38,27 @@ public interface IMetricsService
     /// Get all metrics in one call.
     /// </summary>
     Task<ServiceResult<ProjectMetrics>> GetAllMetricsAsync(Guid projectId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Get aggregated dashboard metrics summary across all projects.
+    /// Includes total projects, active projects, time, revenue, streaks, and last activity date.
+    /// </summary>
+    Task<ServiceResult<MetricsSummary>> GetDashboardSummaryAsync(CancellationToken ct = default);
 }
+
+/// <summary>
+/// Aggregated metrics summary for the dashboard.
+/// </summary>
+public record MetricsSummary(
+    int TotalProjects,
+    int ActiveProjects,
+    int TotalHours,
+    decimal TotalRevenue,
+    decimal AverageHourlyRate,
+    int CurrentStreakDays,
+    int LongestStreakDays,
+    DateTime? LastActivityDate
+);
 
 /// <summary>
 /// Container for all project metrics.

@@ -196,4 +196,100 @@ public class MetricsService : IMetricsService
             return ServiceResult<ProjectMetrics>.Failure($"Failed to retrieve metrics: {ex.Message}");
         }
     }
+
+    public async Task<ServiceResult<MetricsSummary>> GetDashboardSummaryAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            // Get all projects
+            var projects = await _context.Projects.ToListAsync(ct);
+            var totalProjects = projects.Count;
+            var activeProjects = projects.Count(p => p.IsActive);
+
+            // Get all daily logs
+            var allLogs = await _context.DailyLogs.ToListAsync(ct);
+
+            // Calculate aggregated metrics
+            var totalMinutes = allLogs.Sum(l => l.TimeSpentMinutes);
+            var totalHours = totalMinutes / 60;
+            var totalRevenue = allLogs.Sum(l => l.RevenueGenerated);
+            var averageHourlyRate = totalHours > 0 ? Math.Round(totalRevenue / totalHours, 2) : 0m;
+
+            // Get last activity date
+            var lastActivityDate = allLogs.OrderByDescending(l => l.Date).FirstOrDefault()?.Date;
+            var lastActivityDateTime = lastActivityDate?.ToDateTime(TimeOnly.MinValue);
+
+            // Calculate streaks
+            var distinctDates = allLogs.Select(l => l.Date).Distinct().OrderByDescending(d => d).ToList();
+            
+            var (currentStreak, longestStreak) = CalculateStreaks(distinctDates);
+
+            var summary = new MetricsSummary(
+                TotalProjects: totalProjects,
+                ActiveProjects: activeProjects,
+                TotalHours: totalHours,
+                TotalRevenue: totalRevenue,
+                AverageHourlyRate: averageHourlyRate,
+                CurrentStreakDays: currentStreak,
+                LongestStreakDays: longestStreak,
+                LastActivityDate: lastActivityDateTime);
+
+            _logger.LogInformation("Retrieved dashboard summary: {TotalProjects} projects, {TotalHours} hours, {TotalRevenue} revenue", 
+                totalProjects, totalHours, totalRevenue);
+
+            return ServiceResult<MetricsSummary>.Success(summary);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving dashboard summary");
+            return ServiceResult<MetricsSummary>.Failure($"Failed to retrieve dashboard summary: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Calculate current and longest streaks from a list of dates.
+    /// </summary>
+    private static (int CurrentStreak, int LongestStreak) CalculateStreaks(List<DateOnly> sortedDatesDescending)
+    {
+        if (!sortedDatesDescending.Any())
+            return (0, 0);
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        
+        // Current streak: consecutive days backwards from today
+        var currentStreak = 0;
+        var currentDate = today;
+        foreach (var date in sortedDatesDescending)
+        {
+            if (date == currentDate || date == currentDate.AddDays(-1))
+            {
+                currentStreak++;
+                currentDate = date;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // Longest streak: scan through all dates
+        var sortedDatesAscending = sortedDatesDescending.OrderBy(d => d).ToList();
+        var longestStreak = 1;
+        var tempStreak = 1;
+
+        for (int i = 1; i < sortedDatesAscending.Count; i++)
+        {
+            var daysDifference = sortedDatesAscending[i].DayNumber - sortedDatesAscending[i - 1].DayNumber;
+            if (daysDifference == 1)
+            {
+                tempStreak++;
+                longestStreak = Math.Max(longestStreak, tempStreak);
+            }
+            else
+            {
+                tempStreak = 1;
+            }
+        }
+
+        return (currentStreak, longestStreak);    }
 }
