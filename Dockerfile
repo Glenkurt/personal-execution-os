@@ -14,8 +14,8 @@ COPY PersonalExecutionOS.csproj ./
 RUN dotnet restore ./PersonalExecutionOS.csproj
 
 COPY . ./
-# Copy Angular build artifacts - output is already configured to wwwroot in angular.json
-COPY --from=node-build /src/wwwroot ./wwwroot
+# Copy Angular build artifacts - extract from 'browser' subdirectory if present (Angular 17+ default)
+COPY --from=node-build /src/wwwroot/browser ./wwwroot
 
 RUN dotnet publish ./PersonalExecutionOS.csproj -c Release -o /app/publish --no-restore
 
