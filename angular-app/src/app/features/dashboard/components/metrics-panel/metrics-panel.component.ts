@@ -80,7 +80,7 @@ export class MetricsPanelComponent {
   }
 
   getTotalRevenue(): string {
-    if (!this.metrics) return '$0.00';
+    if (!this.metrics || this.metrics.totalRevenue === undefined || this.metrics.totalRevenue === null) return '$0.00';
     return '$' + this.metrics.totalRevenue.toFixed(2);
   }
 }

@@ -42,8 +42,12 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.log) {
       this.populateForm(this.log);
-    } else if (this.selectedProjectId) {
-      this.logForm.patchValue({ projectId: this.selectedProjectId });
+    } else {
+      // Initialize with today's date for new logs
+      this.logForm.patchValue({ 
+        date: this.today,
+        projectId: this.selectedProjectId || ''
+      });
     }
   }
 
@@ -70,7 +74,7 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
       projectId: ['', Validators.required],
       taskDescription: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
       timeSpentMinutes: ['', [Validators.required, Validators.min(1), Validators.max(1440)]],
-      outputDescription: ['', [Validators.maxLength(1000)]],
+      outputDescription: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1000)]],
       revenueGenerated: ['', [Validators.min(0)]],
       note: ['', [Validators.maxLength(500)]]
     });
@@ -111,7 +115,7 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
       date: formValue.date,
       taskDescription: formValue.taskDescription.trim(),
       timeSpentMinutes: parseInt(formValue.timeSpentMinutes, 10),
-      outputDescription: formValue.outputDescription?.trim() || '',
+      outputDescription: formValue.outputDescription.trim(),
       revenueGenerated: formValue.revenueGenerated ? parseFloat(formValue.revenueGenerated) : 0,
       note: formValue.note?.trim() || ''
     };
@@ -144,7 +148,7 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
     const request: UpdateDailyLogRequest = {
       taskDescription: formValue.taskDescription.trim(),
       timeSpentMinutes: parseInt(formValue.timeSpentMinutes, 10),
-      outputDescription: formValue.outputDescription?.trim() || '',
+      outputDescription: formValue.outputDescription.trim(),
       revenueGenerated: formValue.revenueGenerated ? parseFloat(formValue.revenueGenerated) : 0,
       note: formValue.note?.trim() || ''
     };

@@ -67,12 +67,12 @@ export class DailyLogService {
     projectId: string,
     startDate: string,
     endDate: string
-  ): Observable<DailyLogRange> {
+  ): Observable<DailyLogResponse[]> {
     const params = new HttpParams()
       .set('startDate', startDate)
       .set('endDate', endDate);
 
-    return this.http.get<DailyLogRange>(
+    return this.http.get<DailyLogResponse[]>(
       `${this.apiUrl}/project/${projectId}/range`,
       { params }
     );

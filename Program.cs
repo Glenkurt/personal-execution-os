@@ -30,6 +30,20 @@ builder.Services.AddScoped<IMetricsService, MetricsService>();
 
 builder.Services.AddLogging();
 
+// Add CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:4200" };
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecifiedOrigins", policyBuilder =>
+    {
+        policyBuilder
+            .WithOrigins(allowedOrigins)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 // Add controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -41,6 +55,9 @@ var app = builder.Build();
 
 // Use global exception handler middleware
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
+// Enable CORS
+app.UseCors("AllowSpecifiedOrigins");
 
 if (applyMigrationsOnStartup && !app.Environment.IsEnvironment("Testing"))
 {

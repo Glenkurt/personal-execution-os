@@ -175,14 +175,14 @@ import {
           <div class="empty-icon">📭</div>
           <h3>No Projects Yet</h3>
           <p>Create your first project to get started tracking your work.</p>
-          <button class="btn btn-primary">➕ Create Project</button>
+          <button class="btn btn-primary" (click)="openNewProjectModal()">➕ Create Project</button>
         </section>
 
         <section *ngIf="activeProject && recentLogs.length === 0" class="empty-state">
           <div class="empty-icon">📝</div>
           <h3>No Activity</h3>
           <p>No work logged in the last 7 days. Start logging your tasks!</p>
-          <button class="btn btn-primary">📝 Log First Task</button>
+          <button class="btn btn-primary" (click)="openLogWorkModal()">📝 Log First Task</button>
         </section>
       </main>
     </div>
@@ -884,14 +884,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .getLogsByProjectAndDateRange(projectId, startDate, endDate)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (logRange) => {
-          this.recentLogs = logRange.logs.sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          );
-          this.totalLogsHours = logRange.logs.reduce(
-            (sum, log) => sum + log.timeSpentMinutes / 60,
-            0
-          );
+        next: (logs) => {
+          if (logs && logs.length > 0) {
+            this.recentLogs = logs.sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+            this.totalLogsHours = logs.reduce(
+              (sum, log) => sum + log.timeSpentMinutes / 60,
+              0
+            );
+          } else {
+            this.recentLogs = [];
+            this.totalLogsHours = 0;
+          }
           this.isLoading = false;
         },
         error: (err) => {
@@ -950,11 +955,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * Handle project selection from ProjectSelector component.
    */
   onProjectSelected(projectId: string): void {
-    const selected = this.projects.find((p) => p.id === projectId);
-    if (selected) {
-      this.activeProject = selected;
-      this.loadLogsForProject(projectId);
-    }
+    this.projectService
+      .activateProject({ projectId })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (activatedProject) => {
+          this.activeProject = activatedProject;
+          this.loadLogsForProject(projectId);
+          console.info('Project activated', { projectId });
+        },
+        error: (err) => {
+          console.error('Failed to activate project', { projectId, error: err });
+          this.error = 'Failed to activate project. Please try again.';
+        }
+      });
   }
 
   /**

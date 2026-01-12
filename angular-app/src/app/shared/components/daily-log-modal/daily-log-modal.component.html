@@ -1,5 +1,5 @@
-<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()" (mousedown)="$event.stopPropagation()">
+  <div class="modal-content" (click)="$event.stopPropagation()" (mousedown)="$event.stopPropagation()">
     <!-- Modal Header -->
     <div class="modal-header">
       <h2 class="modal-title">{{ modalTitle }}</h2>
@@ -100,18 +100,22 @@
 
         <!-- Output Description Field -->
         <div class="form-group">
-          <label for="outputDescription" class="form-label">Output / Results</label>
+          <label for="outputDescription" class="form-label">Output / Results <span class="required">*</span></label>
           <textarea
             id="outputDescription"
             class="form-textarea"
             formControlName="outputDescription"
             placeholder="What did you deliver or accomplish?"
             rows="2"
+            [class.error]="logForm.get('outputDescription')?.invalid && logForm.get('outputDescription')?.touched"
             [disabled]="isSubmitting"
             maxlength="1000"
           ></textarea>
           <div class="char-count">
             {{ logForm.get('outputDescription')?.value?.length || 0 }}/1000
+          </div>
+          <div class="error-text" *ngIf="logForm.get('outputDescription')?.invalid && logForm.get('outputDescription')?.touched">
+            {{ getErrorMessage('outputDescription') }}
           </div>
         </div>
 
