@@ -32,7 +32,7 @@ export class DailyLogService {
   /**
    * Get a specific daily log by ID.
    */
-  getLogById(id: number): Observable<DailyLogResponse> {
+  getLogById(id: string): Observable<DailyLogResponse> {
     return this.http.get<DailyLogResponse>(`${this.apiUrl}/${id}`);
   }
 
@@ -46,25 +46,25 @@ export class DailyLogService {
   /**
    * Update an existing daily log entry.
    */
-  updateLog(id: number, request: UpdateDailyLogRequest): Observable<DailyLogResponse> {
+  updateLog(id: string, request: UpdateDailyLogRequest): Observable<DailyLogResponse> {
     return this.http.put<DailyLogResponse>(`${this.apiUrl}/${id}`, request);
   }
 
   /**
    * Delete a daily log entry.
    */
-  deleteLog(id: number): Observable<void> {
+  deleteLog(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   /**
    * Get logs for a specific project within a date range.
-   * @param projectId - The project ID
+   * @param projectId - The project ID (GUID)
    * @param startDate - Start date in ISO 8601 format (YYYY-MM-DD)
    * @param endDate - End date in ISO 8601 format (YYYY-MM-DD)
    */
   getLogsByProjectAndDateRange(
-    projectId: number,
+    projectId: string,
     startDate: string,
     endDate: string
   ): Observable<DailyLogRange> {
@@ -81,7 +81,7 @@ export class DailyLogService {
   /**
    * Get logs for a specific project.
    */
-  getLogsByProject(projectId: number): Observable<DailyLogResponse[]> {
+  getLogsByProject(projectId: string): Observable<DailyLogResponse[]> {
     return this.http.get<DailyLogResponse[]>(`${this.apiUrl}/project/${projectId}`);
   }
 }

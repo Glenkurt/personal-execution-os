@@ -17,9 +17,11 @@ export enum ProjectStatus {
  * Core project domain entity.
  */
 export interface Project {
-  id: number;
+  id: string; // GUID from backend
   name: string;
   description: string;
+  goal: string | null;
+  startDate: string; // ISO 8601 date format
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -29,8 +31,11 @@ export interface Project {
  * Request DTO for creating a new project.
  */
 export interface CreateProjectRequest {
-  name: string;
-  description: string;
+  name: string; // 1-100 characters
+  description?: string; // Optional, up to 500 characters
+  goal?: string | null; // Optional, 1-500 characters
+  startDate: string; // ISO 8601 date format
+  isActive?: boolean; // Default: true
 }
 
 /**
@@ -39,15 +44,19 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
   name?: string;
   description?: string;
+  goal?: string | null;
+  isActive?: boolean;
 }
 
 /**
  * Response DTO for project API responses.
  */
 export interface ProjectResponse {
-  id: number;
+  id: string; // GUID
   name: string;
   description: string;
+  goal: string | null;
+  startDate: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -57,7 +66,7 @@ export interface ProjectResponse {
  * Request DTO for activating a project.
  */
 export interface ActivateProjectRequest {
-  projectId: number;
+  projectId: string; // GUID
 }
 
 /**

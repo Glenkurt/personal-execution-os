@@ -46,12 +46,15 @@ export interface MetricsResponse {
 
 /**
  * Summary metrics for dashboard overview.
+ * Maps to the backend MetricsSummaryResponse.
  */
 export interface MetricsSummary {
-  allProjectsHours: number;
-  activeProjectsCount: number;
-  thisMonthHours: number;
-  thisWeekHours: number;
-  averageHoursPerDay: number;
-  totalLogsCount: number;
+  totalProjects: number;
+  activeProjects: number;
+  totalTimeHours: number;
+  totalRevenue: number;
+  averageHourlyRate: number;
+  currentStreakDays: number;
+  longestStreakDays: number;
+  lastActivityDate: string | null;
 }

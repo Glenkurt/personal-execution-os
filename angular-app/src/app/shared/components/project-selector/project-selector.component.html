@@ -1,0 +1,15 @@
+<div class="selector-wrapper">
+  <label for="project-select" class="selector-label">Select Project</label>
+  <select
+    id="project-select"
+    class="selector-input"
+    [value]="selectedProjectId || ''"
+    (change)="onProjectSelect($any($event.target).value)"
+  >
+    <option value="">-- All Projects --</option>
+    <option *ngFor="let project of projects" [value]="project.id">
+      {{ project.name }}
+      <span *ngIf="project.isActive" class="active-badge">✓</span>
+    </option>
+  </select>
+</div>

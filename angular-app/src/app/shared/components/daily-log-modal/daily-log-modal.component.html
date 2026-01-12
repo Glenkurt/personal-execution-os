@@ -1,0 +1,178 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">{{ modalTitle }}</h2>
+      <button class="close-button" (click)="closeModal()" type="button" aria-label="Close modal">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Error Alert -->
+      <div class="error-alert" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        <span class="error-message">{{ error }}</span>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="logForm" (ngSubmit)="onSubmit()" class="log-form">
+        <!-- Date Field -->
+        <div class="form-group">
+          <label for="date" class="form-label">Date *</label>
+          <input
+            id="date"
+            type="date"
+            class="form-input"
+            formControlName="date"
+            [min]="minDate"
+            [max]="today"
+            [class.error]="logForm.get('date')?.invalid && logForm.get('date')?.touched"
+            [disabled]="isSubmitting"
+          />
+          <div class="error-text" *ngIf="logForm.get('date')?.invalid && logForm.get('date')?.touched">
+            {{ getErrorMessage('date') }}
+          </div>
+        </div>
+
+        <!-- Project Field -->
+        <div class="form-group">
+          <label for="projectId" class="form-label">Project *</label>
+          <select
+            id="projectId"
+            class="form-input"
+            formControlName="projectId"
+            [class.error]="logForm.get('projectId')?.invalid && logForm.get('projectId')?.touched"
+            [disabled]="isSubmitting"
+          >
+            <option value="">-- Select Project --</option>
+            <option *ngFor="let project of projects" [value]="project.id">
+              {{ project.name }}
+            </option>
+          </select>
+          <div class="error-text" *ngIf="logForm.get('projectId')?.invalid && logForm.get('projectId')?.touched">
+            {{ getErrorMessage('projectId') }}
+          </div>
+        </div>
+
+        <!-- Task Description Field -->
+        <div class="form-group">
+          <label for="taskDescription" class="form-label">Task Description *</label>
+          <textarea
+            id="taskDescription"
+            class="form-textarea"
+            formControlName="taskDescription"
+            placeholder="What did you work on?"
+            rows="3"
+            [disabled]="isSubmitting"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">
+            {{ logForm.get('taskDescription')?.value?.length || 0 }}/500
+          </div>
+          <div class="error-text" *ngIf="logForm.get('taskDescription')?.invalid && logForm.get('taskDescription')?.touched">
+            {{ getErrorMessage('taskDescription') }}
+          </div>
+        </div>
+
+        <!-- Time Spent Field -->
+        <div class="form-group">
+          <label for="timeSpentMinutes" class="form-label">Time Spent (minutes) *</label>
+          <input
+            id="timeSpentMinutes"
+            type="number"
+            class="form-input"
+            formControlName="timeSpentMinutes"
+            placeholder="e.g., 120"
+            min="1"
+            max="1440"
+            [class.error]="logForm.get('timeSpentMinutes')?.invalid && logForm.get('timeSpentMinutes')?.touched"
+            [disabled]="isSubmitting"
+          />
+          <div class="helper-text">
+            ≈ {{ (logForm.get('timeSpentMinutes')?.value || 0) / 60 | number: '1.1-1' }} hours
+          </div>
+          <div class="error-text" *ngIf="logForm.get('timeSpentMinutes')?.invalid && logForm.get('timeSpentMinutes')?.touched">
+            {{ getErrorMessage('timeSpentMinutes') }}
+          </div>
+        </div>
+
+        <!-- Output Description Field -->
+        <div class="form-group">
+          <label for="outputDescription" class="form-label">Output / Results</label>
+          <textarea
+            id="outputDescription"
+            class="form-textarea"
+            formControlName="outputDescription"
+            placeholder="What did you deliver or accomplish?"
+            rows="2"
+            [disabled]="isSubmitting"
+            maxlength="1000"
+          ></textarea>
+          <div class="char-count">
+            {{ logForm.get('outputDescription')?.value?.length || 0 }}/1000
+          </div>
+        </div>
+
+        <!-- Revenue Field -->
+        <div class="form-group">
+          <label for="revenueGenerated" class="form-label">Revenue Generated ($)</label>
+          <input
+            id="revenueGenerated"
+            type="number"
+            class="form-input"
+            formControlName="revenueGenerated"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            [disabled]="isSubmitting"
+          />
+          <div class="error-text" *ngIf="logForm.get('revenueGenerated')?.invalid && logForm.get('revenueGenerated')?.touched">
+            {{ getErrorMessage('revenueGenerated') }}
+          </div>
+        </div>
+
+        <!-- Note Field -->
+        <div class="form-group">
+          <label for="note" class="form-label">Notes</label>
+          <textarea
+            id="note"
+            class="form-textarea"
+            formControlName="note"
+            placeholder="Any additional notes or reflections?"
+            rows="2"
+            [disabled]="isSubmitting"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">
+            {{ logForm.get('note')?.value?.length || 0 }}/500
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="closeModal()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSubmit()"
+        [disabled]="isSubmitting || logForm.invalid"
+      >
+        <span *ngIf="!isSubmitting">{{ submitButtonText }}</span>
+        <span *ngIf="isSubmitting">
+          <span class="spinner"></span> Saving...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

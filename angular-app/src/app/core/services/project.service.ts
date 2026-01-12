@@ -30,9 +30,16 @@ export class ProjectService {
   }
 
   /**
+   * Get the currently active project.
+   */
+  getActiveProject(): Observable<ProjectResponse> {
+    return this.http.get<ProjectResponse>(`${this.apiUrl}/active/current`);
+  }
+
+  /**
    * Get a specific project by ID.
    */
-  getProjectById(id: number): Observable<ProjectResponse> {
+  getProjectById(id: string): Observable<ProjectResponse> {
     return this.http.get<ProjectResponse>(`${this.apiUrl}/${id}`);
   }
 
@@ -47,7 +54,7 @@ export class ProjectService {
    * Update an existing project.
    */
   updateProject(
-    id: number,
+    id: string,
     request: UpdateProjectRequest
   ): Observable<ProjectResponse> {
     return this.http.put<ProjectResponse>(`${this.apiUrl}/${id}`, request);
@@ -56,7 +63,7 @@ export class ProjectService {
   /**
    * Delete a project.
    */
-  deleteProject(id: number): Observable<void> {
+  deleteProject(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 

@@ -1,0 +1,116 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">{{ modalTitle }}</h2>
+      <button class="close-button" (click)="closeModal()" type="button" aria-label="Close modal">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Error Alert -->
+      <div class="error-alert" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        <span class="error-message">{{ error }}</span>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="project-form">
+        <!-- Project Name Field -->
+        <div class="form-group">
+          <label for="name" class="form-label">Project Name *</label>
+          <input
+            id="name"
+            type="text"
+            class="form-input"
+            formControlName="name"
+            placeholder="Enter project name"
+            [class.error]="projectForm.get('name')?.invalid && projectForm.get('name')?.touched"
+            [disabled]="isSubmitting"
+            maxlength="100"
+          />
+          <div class="error-text" *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched">
+            {{ getErrorMessage('name') }}
+          </div>
+        </div>
+
+        <!-- Description Field -->
+        <div class="form-group">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            id="description"
+            class="form-textarea"
+            formControlName="description"
+            placeholder="Enter project description"
+            rows="3"
+            [disabled]="isSubmitting"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">
+            {{ projectForm.get('description')?.value?.length || 0 }}/500
+          </div>
+        </div>
+
+        <!-- Goal Field -->
+        <div class="form-group">
+          <label for="goal" class="form-label">Goal</label>
+          <textarea
+            id="goal"
+            class="form-textarea"
+            formControlName="goal"
+            placeholder="What do you want to achieve?"
+            rows="3"
+            [disabled]="isSubmitting"
+            maxlength="500"
+          ></textarea>
+          <div class="char-count">
+            {{ projectForm.get('goal')?.value?.length || 0 }}/500
+          </div>
+        </div>
+
+        <!-- Start Date Field -->
+        <div class="form-group">
+          <label for="startDate" class="form-label">Start Date *</label>
+          <input
+            id="startDate"
+            type="date"
+            class="form-input"
+            formControlName="startDate"
+            [min]="minDate"
+            [max]="today"
+            [class.error]="projectForm.get('startDate')?.invalid && projectForm.get('startDate')?.touched"
+            [disabled]="isSubmitting"
+          />
+          <div class="error-text" *ngIf="projectForm.get('startDate')?.invalid && projectForm.get('startDate')?.touched">
+            {{ getErrorMessage('startDate') }}
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="closeModal()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSubmit()"
+        [disabled]="isSubmitting || projectForm.invalid"
+      >
+        <span *ngIf="!isSubmitting">{{ submitButtonText }}</span>
+        <span *ngIf="isSubmitting">
+          <span class="spinner"></span> Saving...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

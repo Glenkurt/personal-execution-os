@@ -27,7 +27,7 @@ public sealed class DashboardJsonContractTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetActiveProject_WhenProjectExists_ReturnsPascalCaseId()
+    public async Task GetActiveProject_WhenProjectExists_ReturnsCamelCaseId()
     {
         // Arrange
         var created = await CreateProjectAsync(name: "Contract Project", isActive: true);
@@ -38,12 +38,12 @@ public sealed class DashboardJsonContractTests : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("\"Id\"", json);
+        Assert.Contains("\"id\"", json);
         Assert.Contains(created.Id.ToString(), json);
     }
 
     [Fact]
-    public async Task GetAllMetrics_WhenProjectExists_ResponseContainsPascalCaseTotalTimeMinutes()
+    public async Task GetAllMetrics_WhenProjectExists_ResponseContainsCamelCaseTotalTimeMinutes()
     {
         // Arrange
         var project = await CreateProjectAsync(name: "Metrics Contract Project", isActive: true);
@@ -54,11 +54,11 @@ public sealed class DashboardJsonContractTests : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("\"TotalTimeMinutes\"", json);
+        Assert.Contains("\"totalTimeMinutes\"", json);
     }
 
     [Fact]
-    public async Task GetDailyLogsByRange_WhenProjectHasLogs_ResponseItemsContainPascalCaseTaskDescription()
+    public async Task GetDailyLogsByRange_WhenProjectHasLogs_ResponseItemsContainCamelCaseTaskDescription()
     {
         // Arrange
         var project = await CreateProjectAsync(name: "Logs Contract Project", isActive: true);
@@ -86,7 +86,7 @@ public sealed class DashboardJsonContractTests : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("\"TaskDescription\"", json);
+        Assert.Contains("\"taskDescription\"", json);
         Assert.Contains("Task A", json);
     }
 

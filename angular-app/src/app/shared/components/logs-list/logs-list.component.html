@@ -1,0 +1,33 @@
+<div class="logs-container">
+  <div class="empty-state" *ngIf="!logs || logs.length === 0">
+    <span class="empty-icon">📋</span>
+    <p class="empty-message">{{ emptyMessage }}</p>
+  </div>
+
+  <div class="logs-list" *ngIf="logs && logs.length > 0">
+    <div class="log-item" *ngFor="let log of logs">
+      <div class="log-header">
+        <div class="log-date">{{ formatDate(log.date) }}</div>
+        <div class="log-hours">{{ formatHours(log.timeSpentMinutes) }}</div>
+      </div>
+
+      <div class="log-body">
+        <p class="log-task" *ngIf="log.taskDescription">
+          <strong>Task:</strong> {{ log.taskDescription }}
+        </p>
+
+        <p class="log-output" *ngIf="log.outputDescription">
+          <strong>Output:</strong> {{ log.outputDescription }}
+        </p>
+
+        <div class="log-footer" *ngIf="log.revenueGenerated">
+          <span class="revenue-badge">{{ formatCurrency(log.revenueGenerated) }}</span>
+        </div>
+
+        <p class="log-note" *ngIf="log.note">
+          <em>{{ log.note }}</em>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

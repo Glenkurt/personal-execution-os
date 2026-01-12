@@ -28,7 +28,7 @@ describe('MetricsService', () => {
 
   describe('getProjectMetrics', () => {
     it('should fetch metrics for a specific project', () => {
-      const projectId = 1;
+      const projectId = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
       const mockMetrics: MetricsResponse = {
         projectId,
         totalHours: 160,
@@ -53,21 +53,52 @@ describe('MetricsService', () => {
   });
 
   describe('getDashboardMetrics', () => {
-    it('should fetch dashboard summary metrics', () => {
-      service.getDashboardMetrics().subscribe(() => {
-        expect(true).toBeTruthy();
+    it('should fetch dashboard summary metrics with complete response', () => {
+      const mockDashboardMetrics = {
+        totalProjects: 5,
+        activeProjects: 2,
+        totalTimeHours: 240,
+        totalRevenue: 3500,
+        averageHourlyRate: 100,
+        currentStreakDays: 7,
+        longestStreakDays: 30,
+        lastActivityDate: '2025-01-10T00:00:00Z',
+      };
+
+      service.getDashboardMetrics().subscribe((metrics) => {
+        expect(metrics.totalProjects).toBe(5);
+        expect(metrics.activeProjects).toBe(2);
+        expect(metrics.totalTimeHours).toBe(240);
+        expect(metrics.totalRevenue).toBe(3500);
+        expect(metrics.currentStreakDays).toBe(7);
       });
 
       const req = httpMock.expectOne(`${apiUrl}/dashboard/summary`);
       expect(req.request.method).toBe('GET');
-      req.flush({
-        allProjectsHours: 500,
-        activeProjectsCount: 3,
-        thisMonthHours: 100,
-        thisWeekHours: 20,
-        averageHoursPerDay: 8,
-        totalLogsCount: 60,
+      req.flush(mockDashboardMetrics);
+    });
+
+    it('should handle zero metrics gracefully', () => {
+      const mockEmptyMetrics = {
+        totalProjects: 0,
+        activeProjects: 0,
+        totalTimeHours: 0,
+        totalRevenue: 0,
+        averageHourlyRate: 0,
+        currentStreakDays: 0,
+        longestStreakDays: 0,
+        lastActivityDate: null,
+      };
+
+      service.getDashboardMetrics().subscribe((metrics) => {
+        expect(metrics.totalProjects).toBe(0);
+        expect(metrics.activeProjects).toBe(0);
+        expect(metrics.totalTimeHours).toBe(0);
       });
+
+      const req = httpMock.expectOne(`${apiUrl}/dashboard/summary`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockEmptyMetrics);
     });
   });
 });

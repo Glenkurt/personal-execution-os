@@ -18,9 +18,9 @@ export class MetricsService {
 
   /**
    * Get metrics for a specific project.
-   * @param projectId - The project ID
+   * @param projectId - The project ID (GUID)
    */
-  getProjectMetrics(projectId: number): Observable<MetricsResponse> {
+  getProjectMetrics(projectId: string): Observable<MetricsResponse> {
     return this.http.get<MetricsResponse>(`${this.apiUrl}/${projectId}`);
   }
 

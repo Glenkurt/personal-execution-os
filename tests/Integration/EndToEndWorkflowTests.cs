@@ -295,8 +295,8 @@ public class EndToEndWorkflowTests : IAsyncLifetime
         // Verify response is valid JSON with metrics
         var metricsJson = await metricsResponse.Content.ReadAsStringAsync();
         Assert.NotEmpty(metricsJson);
-        Assert.Contains("ProjectId", metricsJson);
-        Assert.Contains("TotalTimeMinutes", metricsJson);
+        Assert.Contains("projectId", metricsJson);
+        Assert.Contains("totalTimeMinutes", metricsJson);
     }
 
 

@@ -1,0 +1,37 @@
+<div class="metrics-grid" *ngIf="metrics">
+  <app-stats-card
+    [value]="getTotalHours()"
+    label="Total Hours"
+    icon="⏱️"
+  ></app-stats-card>
+
+  <app-stats-card
+    [value]="metrics.activeProjects"
+    label="Active Projects"
+    icon="📁"
+  ></app-stats-card>
+
+  <app-stats-card
+    [value]="metrics.currentStreakDays"
+    label="Current Streak"
+    icon="🔥"
+  ></app-stats-card>
+
+  <app-stats-card
+    [value]="getTotalRevenue()"
+    label="Total Revenue"
+    icon="💰"
+  ></app-stats-card>
+
+  <app-stats-card
+    [value]="metrics.longestStreakDays"
+    label="Longest Streak"
+    icon="🏆"
+  ></app-stats-card>
+
+  <app-stats-card
+    [value]="metrics.totalProjects"
+    label="Total Projects"
+    icon="📊"
+  ></app-stats-card>
+</div>

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { DashboardComponent } from './dashboard.component';
 import { ProjectService, DailyLogService, MetricsService } from '@core/services';
@@ -14,9 +14,11 @@ describe('DashboardComponent', () => {
 
   const mockProjects = [
     {
-      id: 1,
+      id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
       name: 'Test Project',
       description: 'A test project',
+      goal: null,
+      startDate: '2025-01-10',
       isActive: true,
       createdAt: '2025-01-10T00:00:00Z',
       updatedAt: '2025-01-10T00:00:00Z',
@@ -25,27 +27,35 @@ describe('DashboardComponent', () => {
 
   const mockLogs = [
     {
-      id: 1,
-      projectId: 1,
-      logDate: '2025-01-10',
-      hoursWorked: 8,
-      description: 'Development work',
+      id: 'd4f1a89b-f5e2-48c1-b7e9-3f6c1d2e4a5b',
+      projectId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+      date: '2025-01-10',
+      taskDescription: 'Development work',
+      timeSpentMinutes: 480,
+      outputDescription: 'Completed feature X',
+      revenueGenerated: 150,
+      note: null,
       createdAt: '2025-01-10T00:00:00Z',
       updatedAt: '2025-01-10T00:00:00Z',
     },
   ];
 
   const mockMetrics = {
-    allProjectsHours: 160,
-    activeProjectsCount: 1,
-    thisMonthHours: 40,
-    thisWeekHours: 8,
-    averageHoursPerDay: 8,
-    totalLogsCount: 20,
+    totalProjects: 5,
+    activeProjects: 1,
+    totalTimeHours: 160,
+    totalRevenue: 2500,
+    averageHourlyRate: 100,
+    currentStreakDays: 5,
+    longestStreakDays: 30,
+    lastActivityDate: '2025-01-10T00:00:00Z',
   };
 
   beforeEach(async () => {
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['getAllProjects']);
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
+      'getAllProjects',
+      'getActiveProject',
+    ]);
     const dailyLogServiceSpy = jasmine.createSpyObj('DailyLogService', ['getAllLogs']);
     const metricsServiceSpy = jasmine.createSpyObj('MetricsService', ['getDashboardMetrics']);
 
@@ -62,6 +72,7 @@ describe('DashboardComponent', () => {
     dailyLogService = TestBed.inject(DailyLogService) as jasmine.SpyObj<DailyLogService>;
     metricsService = TestBed.inject(MetricsService) as jasmine.SpyObj<MetricsService>;
 
+    projectService.getActiveProject.and.returnValue(of(mockProjects[0]));
     projectService.getAllProjects.and.returnValue(of(mockProjects));
     dailyLogService.getAllLogs.and.returnValue(of(mockLogs));
     metricsService.getDashboardMetrics.and.returnValue(of(mockMetrics));
@@ -72,6 +83,12 @@ describe('DashboardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should load active project on init', () => {
+    fixture.detectChanges();
+    expect(projectService.getActiveProject).toHaveBeenCalled();
+    expect(component.activeProject).toEqual(mockProjects[0]);
   });
 
   it('should load projects on init', () => {
@@ -90,11 +107,6 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
     expect(dailyLogService.getAllLogs).toHaveBeenCalled();
     expect(component.recentLogs.length).toBe(1);
-  });
-
-  it('should set active project from projects list', () => {
-    fixture.detectChanges();
-    expect(component.activeProject).toEqual(mockProjects[0]);
   });
 
   it('should display dashboard title', () => {
@@ -120,6 +132,7 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
     component.onRefresh();
     expect(projectService.getAllProjects).toHaveBeenCalledTimes(2);
+    expect(projectService.getActiveProject).toHaveBeenCalledTimes(2);
   });
 
   it('should set isLoading to false after data loads', (done) => {
@@ -127,6 +140,22 @@ describe('DashboardComponent', () => {
     setTimeout(() => {
       expect(component.isLoading).toBe(false);
       done();
+    }, 100);
+  });
+
+  it('should handle when no active project exists', () => {
+    projectService.getActiveProject.and.returnValue(throwError(() => new Error('No active project')));
+    fixture.detectChanges();
+    // Component should still work - activeProject will be null
+    expect(component.activeProject).toBeNull();
+  });
+
+  it('should display error message on projects load failure', () => {
+    projectService.getAllProjects.and.returnValue(throwError(() => new Error('Load failed')));
+    fixture.detectChanges();
+    setTimeout(() => {
+      expect(component.error).toContain('projects');
+      expect(component.isLoading).toBe(false);
     }, 100);
   });
 });
