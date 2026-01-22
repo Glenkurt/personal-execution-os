@@ -30,41 +30,26 @@ describe('MetricsPanelComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display all metric cards when metrics provided', () => {
+  it('should display all 4 simplified metric cards when metrics provided', () => {
     component.metrics = mockMetrics;
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Total Hours');
-    expect(compiled.textContent).toContain('Active Projects');
-    expect(compiled.textContent).toContain('Current Streak');
-    expect(compiled.textContent).toContain('Total Revenue');
-    expect(compiled.textContent).toContain('Longest Streak');
-    expect(compiled.textContent).toContain('Total Projects');
+    const text = compiled.textContent || '';
+    expect(text).toContain('Total Hours');
+    expect(text).toContain('Current Streak');
+    expect(text).toContain('Total Revenue');
+    expect(text).toContain('Longest Streak');
   });
 
-  it('should display metric values correctly', () => {
+  it('should not display active projects or total projects', () => {
     component.metrics = mockMetrics;
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('240');
-    expect(compiled.textContent).toContain('2');
-    expect(compiled.textContent).toContain('7');
-    expect(compiled.textContent).toContain('$3,500.00');
-  });
-
-  it('should display icons for each metric', () => {
-    component.metrics = mockMetrics;
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('⏱️');
-    expect(compiled.textContent).toContain('📊');
-    expect(compiled.textContent).toContain('🔥');
-    expect(compiled.textContent).toContain('💰');
-    expect(compiled.textContent).toContain('🏆');
-    expect(compiled.textContent).toContain('📁');
+    const text = compiled.textContent || '';
+    expect(text).not.toContain('Active Projects');
+    expect(text).not.toContain('Total Projects');
   });
 
   it('should not display panel when metrics is null', () => {

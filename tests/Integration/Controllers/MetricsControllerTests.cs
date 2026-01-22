@@ -128,6 +128,113 @@ public class MetricsControllerTests : IAsyncLifetime
 
     #endregion
 
+    #region Dashboard Summary Tests
+
+    [Fact]
+    public async Task GetDashboardSummary_ReturnsCamelCaseJsonFormat()
+    {
+        // Arrange - create test data via API
+        var project1 = await CreateProjectAsync("Project 1");
+        var project2 = await CreateProjectAsync("Project 2");
+
+        var log1 = await CreateDailyLogAsync(
+            project1.Id,
+            "Task 1",
+            120,
+            "Output 1",
+            100m);
+
+        var log2 = await CreateDailyLogAsync(
+            project2.Id,
+            "Task 2",
+            60,
+            "Output 2",
+            50m);
+
+        // Act
+        var response = await _client!.GetAsync("/api/metrics/dashboard/summary");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        // Verify camelCase format (not snake_case)
+        Assert.Contains("totalProjects", json);
+        Assert.Contains("activeProjects", json);
+        Assert.Contains("totalTimeHours", json);
+        Assert.Contains("totalRevenue", json);
+        Assert.Contains("averageHourlyRate", json);
+        Assert.Contains("currentStreakDays", json);
+        Assert.Contains("longestStreakDays", json);
+        Assert.Contains("lastActivityDate", json);
+
+        // Verify no snake_case properties
+        Assert.DoesNotContain("total_projects", json);
+        Assert.DoesNotContain("active_projects", json);
+        Assert.DoesNotContain("total_time_hours", json);
+        Assert.DoesNotContain("total_revenue", json);
+    }
+
+    [Fact]
+    public async Task GetDashboardSummary_ReturnsCorrectAggregatedMetrics()
+    {
+        // Arrange - create multiple projects with logs via API
+        var project1 = await CreateProjectAsync("Project 1");
+        var project2 = await CreateProjectAsync("Project 2");
+
+        // Add logs on consecutive days for project 1
+        for (int i = 0; i < 5; i++)
+        {
+            await CreateDailyLogAsync(
+                project1.Id,
+                $"Task {i}",
+                120,
+                $"Output {i}",
+                100m,
+                DateOnly.FromDateTime(DateTime.Today.AddDays(-i)));
+        }
+
+        // Add one log for project 2
+        await CreateDailyLogAsync(
+            project2.Id,
+            "Task",
+            60,
+            "Output",
+            50m);
+
+        // Act
+        var response = await _client!.GetAsync("/api/metrics/dashboard/summary");
+        var summary = await response.Content.ReadFromJsonAsync<MetricsSummaryResponse>();
+
+        // Assert
+        Assert.NotNull(summary);
+        Assert.Equal(2, summary.TotalProjects); // Both projects exist
+        Assert.True(summary.TotalProjects > 0); // At least one active project
+        Assert.Equal(11, summary.TotalTimeHours); // 5 * 120 + 60 = 660 mins = 11 hours
+        Assert.Equal(550m, summary.TotalRevenue); // 5 * 100 + 50 = 550
+        Assert.True(summary.CurrentStreakDays > 0); // Should have streak from consecutive logs
+    }
+
+    [Fact]
+    public async Task GetDashboardSummary_WhenNoData_ReturnsZeroMetrics()
+    {
+        // Act
+        var response = await _client!.GetAsync("/api/metrics/dashboard/summary");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var summary = await response.Content.ReadFromJsonAsync<MetricsSummaryResponse>();
+
+        Assert.NotNull(summary);
+        Assert.Equal(0, summary.TotalProjects);
+        Assert.Equal(0, summary.ActiveProjects);
+        Assert.Equal(0, summary.TotalTimeHours);
+        Assert.Equal(0m, summary.TotalRevenue);
+    }
+
+    #endregion
+
     #region Get All Metrics Tests
 
     [Fact]

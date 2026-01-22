@@ -201,7 +201,7 @@ import {
       [log]="selectedLogForEdit"
       [projects]="projects"
       [selectedProjectId]="activeProject?.id ?? null"
-      (close)="isLogModalOpen = false"
+      (closed)="isLogModalOpen = false"
       (saved)="onLogSaved($event)"
     ></app-daily-log-modal>
   `,

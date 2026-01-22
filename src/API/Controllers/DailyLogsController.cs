@@ -59,13 +59,7 @@ public class DailyLogsController : ControllerBase
             return BadRequest(new { error = "Task description cannot exceed 500 characters" });
         }
 
-        if (string.IsNullOrWhiteSpace(request.OutputDescription))
-        {
-            _logger.LogWarning("Create daily log failed: output description is empty");
-            return BadRequest(new { error = "Output description is required and cannot be empty" });
-        }
-
-        if (request.OutputDescription.Length > 1000)
+        if (request.OutputDescription?.Length > 1000)
         {
             _logger.LogWarning("Create daily log failed: output description exceeds 1000 characters");
             return BadRequest(new { error = "Output description cannot exceed 1000 characters" });
@@ -97,7 +91,7 @@ public class DailyLogsController : ControllerBase
             ProjectId = request.ProjectId,
             TaskDescription = request.TaskDescription.Trim(),
             TimeSpentMinutes = request.TimeSpentMinutes,
-            OutputDescription = request.OutputDescription.Trim(),
+            OutputDescription = request.OutputDescription?.Trim(),
             RevenueGenerated = request.RevenueGenerated,
             Note = request.Note?.Trim()
         };
@@ -265,13 +259,7 @@ public class DailyLogsController : ControllerBase
             return BadRequest(new { error = "Time spent must be greater than 0 minutes" });
         }
 
-        if (string.IsNullOrWhiteSpace(request.OutputDescription))
-        {
-            _logger.LogWarning("Update daily log failed: output description is empty");
-            return BadRequest(new { error = "Output description is required and cannot be empty" });
-        }
-
-        if (request.OutputDescription.Length > 1000)
+        if (request.OutputDescription?.Length > 1000)
         {
             _logger.LogWarning("Update daily log failed: output description exceeds 1000 characters");
             return BadRequest(new { error = "Output description cannot exceed 1000 characters" });
@@ -356,7 +344,7 @@ public class DailyLogsController : ControllerBase
             ProjectId = log.ProjectId,
             TaskDescription = log.TaskDescription,
             TimeSpentMinutes = log.TimeSpentMinutes,
-            OutputDescription = log.OutputDescription,
+            OutputDescription = log.OutputDescription ?? string.Empty,
             RevenueGenerated = log.RevenueGenerated,
             Note = log.Note,
             CreatedAt = log.CreatedAt

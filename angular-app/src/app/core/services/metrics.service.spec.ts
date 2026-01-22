@@ -100,5 +100,19 @@ describe('MetricsService', () => {
       expect(req.request.method).toBe('GET');
       req.flush(mockEmptyMetrics);
     });
+
+    it('should handle API errors gracefully', (done) => {
+      service.getDashboardMetrics().subscribe(
+        () => fail('should have failed with 500 error'),
+        (error) => {
+          expect(error).toBeTruthy();
+          done();
+        }
+      );
+
+      const req = httpMock.expectOne(`${apiUrl}/dashboard/summary`);
+      expect(req.request.method).toBe('GET');
+      req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+    });
   });
 });

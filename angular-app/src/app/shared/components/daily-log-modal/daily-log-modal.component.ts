@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DailyLogService } from '../../../core/services/daily-log.service';
@@ -15,12 +15,12 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './daily-log-modal.component.html',
   styleUrls: ['./daily-log-modal.component.css']
 })
-export class DailyLogModalComponent implements OnInit, OnDestroy {
+export class DailyLogModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isOpen = false;
   @Input() log: DailyLogResponse | null = null;
   @Input() projects: Project[] = [];
   @Input() selectedProjectId: string | null = null;
-  @Output() close = new EventEmitter<void>();
+  @Output() closed = new EventEmitter<void>();
   @Output() saved = new EventEmitter<DailyLogResponse>();
 
   logForm: FormGroup;
@@ -43,11 +43,21 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
     if (this.log) {
       this.populateForm(this.log);
     } else {
-      // Initialize with today's date for new logs
+      // Initialize with today's date and active project
       this.logForm.patchValue({ 
         date: this.today,
         projectId: this.selectedProjectId || ''
       });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Update project selection when selectedProjectId input changes
+    if (changes['selectedProjectId'] && !this.isEditMode) {
+      const projectId = changes['selectedProjectId'].currentValue;
+      if (projectId && this.logForm) {
+        this.logForm.patchValue({ projectId });
+      }
     }
   }
 
@@ -74,7 +84,7 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
       projectId: ['', Validators.required],
       taskDescription: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
       timeSpentMinutes: ['', [Validators.required, Validators.min(1), Validators.max(1440)]],
-      outputDescription: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1000)]],
+      outputDescription: ['', [Validators.maxLength(1000)]],
       revenueGenerated: ['', [Validators.min(0)]],
       note: ['', [Validators.maxLength(500)]]
     });
@@ -115,7 +125,7 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
       date: formValue.date,
       taskDescription: formValue.taskDescription.trim(),
       timeSpentMinutes: parseInt(formValue.timeSpentMinutes, 10),
-      outputDescription: formValue.outputDescription.trim(),
+      outputDescription: formValue.outputDescription?.trim() || '', // Empty string if not provided
       revenueGenerated: formValue.revenueGenerated ? parseFloat(formValue.revenueGenerated) : 0,
       note: formValue.note?.trim() || ''
     };
@@ -174,7 +184,7 @@ export class DailyLogModalComponent implements OnInit, OnDestroy {
     this.logForm.reset();
     this.error = null;
     this.isSubmitting = false;
-    this.close.emit();
+    this.closed.emit();
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {

@@ -7,12 +7,14 @@ describe('MetricsGridComponent', () => {
   let fixture: ComponentFixture<MetricsGridComponent>;
 
   const mockMetrics: MetricsSummary = {
-    allProjectsHours: 160,
-    activeProjectsCount: 3,
-    thisMonthHours: 40,
-    thisWeekHours: 8,
-    averageHoursPerDay: 8,
-    totalLogsCount: 20,
+    totalProjects: 5,
+    activeProjects: 3,
+    totalTimeHours: 120.5,
+    totalRevenue: 15000.75,
+    averageHourlyRate: 125,
+    currentStreakDays: 7,
+    longestStreakDays: 21,
+    lastActivityDate: null,
   };
 
   beforeEach(async () => {
@@ -35,28 +37,43 @@ describe('MetricsGridComponent', () => {
     expect(section).toBeTruthy();
   });
 
-  it('should display total hours metric', () => {
+  it('should display total hours, revenue, current streak, and longest streak', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('160');
-    expect(compiled.textContent).toContain('Total Hours');
+    const metricCards = compiled.querySelectorAll('.metric-card');
+
+    // Should have exactly 4 cards
+    expect(metricCards.length).toBe(4);
+
+    // Verify content
+    const text = compiled.textContent || '';
+    expect(text).toContain('120.5'); // Total hours
+    expect(text).toContain('15,001'); // Revenue (formatted)
+    expect(text).toContain('7'); // Current streak
+    expect(text).toContain('21'); // Longest streak
+    expect(text).toContain('Total Hours');
+    expect(text).toContain('Total Revenue');
+    expect(text).toContain('Current Streak');
+    expect(text).toContain('Longest Streak');
   });
 
-  it('should display active projects metric', () => {
+  it('should not display active projects or total projects', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('3');
-    expect(compiled.textContent).toContain('Active Projects');
+    const text = compiled.textContent || '';
+
+    // Should NOT show these labels
+    expect(text).not.toContain('Active Projects');
+    expect(text).not.toContain('Total Projects');
   });
 
-  it('should display monthly hours metric', () => {
+  it('should display appropriate icons for each metric', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('40');
-    expect(compiled.textContent).toContain('This Month');
-  });
+    const icons = compiled.querySelectorAll('.metric-icon');
 
-  it('should display weekly hours metric', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('8');
-    expect(compiled.textContent).toContain('This Week');
+    expect(icons.length).toBe(4);
+    expect(icons[0].textContent).toContain('⏰'); // Time
+    expect(icons[1].textContent).toContain('💰'); // Money
+    expect(icons[2].textContent).toContain('🔥'); // Current streak
+    expect(icons[3].textContent).toContain('🏆'); // Longest streak
   });
 
   it('should not display section when metrics is null', () => {
@@ -66,20 +83,21 @@ describe('MetricsGridComponent', () => {
     expect(section).toBeFalsy();
   });
 
-  it('should display all four metric cards', () => {
-    const cards = fixture.nativeElement.querySelectorAll('.metric-card');
-    expect(cards.length).toBe(4);
+  it('should format hours with one decimal place', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('120.5');
   });
 
-  it('should format decimal values correctly', () => {
-    component.metrics = {
-      ...mockMetrics,
-      allProjectsHours: 160.5,
-      thisMonthHours: 40.75,
-      thisWeekHours: 8.25,
-    };
-    fixture.detectChanges();
+  it('should format revenue as currency', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('160.5');
+    // Currency pipe formats $15,001
+    expect(compiled.textContent).toContain('$');
+    expect(compiled.textContent).toContain('15,001');
+  });
+
+  it('should display streak days as integers', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('7');
+    expect(compiled.textContent).toContain('21');
   });
 });

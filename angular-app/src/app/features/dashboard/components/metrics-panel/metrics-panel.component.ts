@@ -17,19 +17,7 @@ import { MetricsSummary } from '@models/index';
         <app-stats-card
           [value]="getTotalHours()"
           label="Total Hours"
-          icon="⏱️"
-        ></app-stats-card>
-
-        <app-stats-card
-          [value]="metrics!.activeProjects"
-          label="Active Projects"
-          icon="📊"
-        ></app-stats-card>
-
-        <app-stats-card
-          [value]="metrics!.currentStreakDays"
-          label="Current Streak"
-          icon="🔥"
+          icon="⏰"
         ></app-stats-card>
 
         <app-stats-card
@@ -39,15 +27,15 @@ import { MetricsSummary } from '@models/index';
         ></app-stats-card>
 
         <app-stats-card
-          [value]="metrics!.longestStreakDays"
-          label="Longest Streak"
-          icon="🏆"
+          [value]="metrics!.currentStreakDays"
+          label="Current Streak"
+          icon="🔥"
         ></app-stats-card>
 
         <app-stats-card
-          [value]="metrics!.totalProjects"
-          label="Total Projects"
-          icon="📁"
+          [value]="metrics!.longestStreakDays"
+          label="Longest Streak"
+          icon="🏆"
         ></app-stats-card>
       </div>
     </div>
@@ -59,14 +47,14 @@ import { MetricsSummary } from '@models/index';
 
     .metrics-panel {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
     }
 
     @media (max-width: 768px) {
       .metrics-panel {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 0.75rem;
+        grid-template-columns: 1fr;
+        gap: 1rem;
       }
     }
   `],

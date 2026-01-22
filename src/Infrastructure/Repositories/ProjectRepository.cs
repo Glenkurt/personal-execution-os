@@ -98,7 +98,7 @@ public class ProjectRepository : IProjectRepository
                 return ServiceResult<Project>.Failure($"Project with ID {projectId} not found");
             }
 
-            // Deactivate all other projects
+            // Deactivate all other projects first and save to avoid unique constraint violation
             var otherProjects = await _context.Projects
                 .Where(p => p.IsActive && p.Id != projectId)
                 .ToListAsync(ct);
@@ -108,9 +108,14 @@ public class ProjectRepository : IProjectRepository
                 otherProject.IsActive = false;
             }
 
-            // Activate the target project
-            project.IsActive = true;
+            // Save deactivations first
+            if (otherProjects.Count > 0)
+            {
+                await _context.SaveChangesAsync(ct);
+            }
 
+            // Now activate the target project
+            project.IsActive = true;
             await _context.SaveChangesAsync(ct);
 
             _logger.LogInformation("Project activated: {ProjectId}", projectId);

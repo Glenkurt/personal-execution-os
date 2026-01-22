@@ -29,9 +29,9 @@ public class DailyLog
     public required int TimeSpentMinutes { get; set; }
 
     /// <summary>
-    /// Description of what was produced/output (required, max 1000 chars)
+    /// Description of what was produced/output (optional, max 1000 chars)
     /// </summary>
-    public required string OutputDescription { get; set; }
+    public string? OutputDescription { get; set; }
 
     /// <summary>
     /// Revenue generated (if any)

@@ -27,9 +27,9 @@ public record CreateDailyLogRequest
     public required int TimeSpentMinutes { get; init; }
 
     /// <summary>
-    /// Description of what was produced (required, max 1000 chars)
+    /// Description of what was produced (optional, max 1000 chars)
     /// </summary>
-    public required string OutputDescription { get; init; }
+    public string? OutputDescription { get; init; } = "";
 
     /// <summary>
     /// Revenue generated (optional, default 0)

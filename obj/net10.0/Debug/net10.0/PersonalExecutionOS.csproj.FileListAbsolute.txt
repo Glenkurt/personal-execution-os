@@ -582,6 +582,7 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/gmf65hs2lc-{0}-5ipweew5fc-5ipweew5fc.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/ewjepzw06u-{0}-8b6a286a95-8b6a286a95.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/agty40dh1w-{0}-cyep3lpml4-cyep3lpml4.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/298jclumjn-{0}-5z0ljhpyms-5z0ljhpyms.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/z9gb11lh2e-{0}-6is8s6nzax-6is8s6nzax.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/772bciyap7-{0}-doc7ca4db9-doc7ca4db9.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/bin/net10.0/Debug/net10.0/appsettings.Production.json
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/fkp9v0b75r-{0}-wivtpghrws-wivtpghrws.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/z9gb11lh2e-{0}-ubcavfe3dr-ubcavfe3dr.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/net10.0/Debug/net10.0/compressed/89i5a5lqmw-{0}-hnf5rcyo4x-hnf5rcyo4x.gz

@@ -1,0 +1,71 @@
+# .NET Build Artifacts
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.dll
+*.pdb
+*.cache
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebugPublic/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+
+# NuGet Packages
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Entity Framework Core
+**/Migrations/*.Designer.cs
+**/Migrations/*ModelSnapshot.cs
+
+# Angular Build Output
+wwwroot/browser/
+wwwroot/*.js
+wwwroot/*.css
+wwwroot/*.html
+wwwroot/3rdpartylicenses.txt
+!wwwroot/index.html
+
+# Node modules
+node_modules/
+
+# Environment Variables (CRITICAL - CONTAINS SENSITIVE DATA)
+.env
+.env.local
+.env.production
+*.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary folders
+PromptOutput/
+temp/
+tmp/

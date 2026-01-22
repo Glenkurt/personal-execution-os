@@ -9,14 +9,14 @@ namespace PersonalExecutionOS.API.Controllers;
 /// Dashboard metrics summary response DTO.
 /// </summary>
 public record MetricsSummaryResponse(
-    int total_projects,
-    int active_projects,
-    int total_time_hours,
-    decimal total_revenue,
-    decimal average_hourly_rate,
-    int current_streak_days,
-    int longest_streak_days,
-    DateTime? last_activity_date);
+    int TotalProjects,
+    int ActiveProjects,
+    int TotalTimeHours,
+    decimal TotalRevenue,
+    decimal AverageHourlyRate,
+    int CurrentStreakDays,
+    int LongestStreakDays,
+    DateTime? LastActivityDate);
 
 /// <summary>
 /// API controller for retrieving project metrics.
@@ -250,20 +250,20 @@ public class MetricsController : ControllerBase
         if (!result.IsSuccess)
         {
             _logger.LogError("Failed to get dashboard summary: {Error}", result.Error);
-            return StatusCode(StatusCodes.Status500InternalServerError, 
+            return StatusCode(StatusCodes.Status500InternalServerError,
                 new { error = result.Error ?? "Failed to retrieve dashboard metrics" });
         }
 
         var summary = result.Value!;
         var response = new MetricsSummaryResponse(
-            total_projects: summary.TotalProjects,
-            active_projects: summary.ActiveProjects,
-            total_time_hours: summary.TotalHours,
-            total_revenue: summary.TotalRevenue,
-            average_hourly_rate: summary.AverageHourlyRate,
-            current_streak_days: summary.CurrentStreakDays,
-            longest_streak_days: summary.LongestStreakDays,
-            last_activity_date: summary.LastActivityDate);
+            TotalProjects: summary.TotalProjects,
+            ActiveProjects: summary.ActiveProjects,
+            TotalTimeHours: summary.TotalHours,
+            TotalRevenue: summary.TotalRevenue,
+            AverageHourlyRate: summary.AverageHourlyRate,
+            CurrentStreakDays: summary.CurrentStreakDays,
+            LongestStreakDays: summary.LongestStreakDays,
+            LastActivityDate: summary.LastActivityDate);
 
         return Ok(response);
     }

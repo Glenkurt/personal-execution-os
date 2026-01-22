@@ -41,7 +41,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(dl => dl.Id);
             entity.Property(dl => dl.Date).IsRequired();
             entity.Property(dl => dl.TaskDescription).IsRequired().HasMaxLength(500);
-            entity.Property(dl => dl.OutputDescription).IsRequired().HasMaxLength(1000);
+            entity.Property(dl => dl.OutputDescription).IsRequired(false).HasMaxLength(1000);
             entity.Property(dl => dl.RevenueGenerated).HasPrecision(18, 2);
             entity.Property(dl => dl.Note).HasMaxLength(1000);
 

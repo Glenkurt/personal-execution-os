@@ -27,7 +27,7 @@ export interface CreateDailyLogRequest {
   date: string; // ISO 8601 date format: YYYY-MM-DD
   taskDescription: string; // 1-500 characters
   timeSpentMinutes: number; // 0-1440
-  outputDescription: string; // 1-1000 characters (REQUIRED)
+  outputDescription?: string; // 0-1000 characters (OPTIONAL)
   revenueGenerated: number; // >= 0
   note?: string | null; // Optional
 }

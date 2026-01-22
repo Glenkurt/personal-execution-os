@@ -403,12 +403,12 @@ describe('DailyLogModalComponent', () => {
   });
 
   describe('Modal Control', () => {
-    it('should emit close event when closeModal is called', () => {
-      spyOn(component.close, 'emit');
+    it('should emit closed event when closeModal is called', () => {
+      spyOn(component.closed, 'emit');
 
       component.closeModal();
 
-      expect(component.close.emit).toHaveBeenCalled();
+      expect(component.closed.emit).toHaveBeenCalled();
     });
 
     it('should reset form on closeModal', () => {
@@ -496,6 +496,183 @@ describe('DailyLogModalComponent', () => {
       const name = component.getProjectName('invalid-id');
 
       expect(name).toBe('Unknown Project');
+    });
+  });
+
+  describe('Default Project Selection (Task 15)', () => {
+    it('should pre-select active project on init when selectedProjectId is provided', () => {
+      const projectId = '123e4567-e89b-12d3-a456-426614174000';
+      component.selectedProjectId = projectId;
+      component.log = null; // Not in edit mode
+
+      component.ngOnInit();
+
+      expect(component.logForm.get('projectId')?.value).toBe(projectId);
+    });
+
+    it('should not pre-select when selectedProjectId is null', () => {
+      component.selectedProjectId = null;
+      component.log = null;
+
+      component.ngOnInit();
+
+      expect(component.logForm.get('projectId')?.value).toBe('');
+    });
+
+    it('should update projectId when selectedProjectId changes via ngOnChanges', () => {
+      const newProjectId = '987e6543-e21b-12d3-a456-426614174999';
+      component.selectedProjectId = null;
+      component.log = null;
+      component.ngOnInit();
+
+      // Simulate input change
+      const changes: any = {
+        selectedProjectId: {
+          currentValue: newProjectId,
+          previousValue: null,
+          firstChange: false,
+          isFirstChange: () => false
+        }
+      };
+      component.ngOnChanges(changes);
+
+      expect(component.logForm.get('projectId')?.value).toBe(newProjectId);
+    });
+
+    it('should not override projectId in edit mode when selectedProjectId changes', () => {
+      const existingLog: DailyLogResponse = {
+        id: '111',
+        projectId: 'original-project-id',
+        date: '2025-01-15',
+        taskDescription: 'Test',
+        timeSpentMinutes: 60,
+        outputDescription: 'Output',
+        revenueGenerated: 0,
+        note: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      component.log = existingLog;
+      component.ngOnInit();
+
+      const newProjectId = 'new-project-id';
+      const changes: any = {
+        selectedProjectId: {
+          currentValue: newProjectId,
+          previousValue: null,
+          firstChange: false,
+          isFirstChange: () => false
+        }
+      };
+      component.ngOnChanges(changes);
+
+      // Should keep original project from log
+      expect(component.logForm.get('projectId')?.value).toBe('original-project-id');
+    });
+
+    it('should allow user to change pre-selected project after initialization', () => {
+      component.selectedProjectId = mockProject.id;
+      component.ngOnInit();
+
+      expect(component.logForm.get('projectId')?.value).toBe(mockProject.id);
+
+      // User changes the project selection
+      const newProjectId = 'different-project-id';
+      component.logForm.patchValue({ projectId: newProjectId });
+
+      expect(component.logForm.get('projectId')?.value).toBe(newProjectId);
+    });
+
+    it('should still require project selection even with default', () => {
+      component.selectedProjectId = mockProject.id;
+      component.ngOnInit();
+
+      // Clear the project selection
+      component.logForm.patchValue({ projectId: '' });
+
+      expect(component.logForm.get('projectId')?.invalid).toBe(true);
+    });
+  });
+
+  describe('Optional Output Description (Task 16)', () => {
+    it('should allow submission with empty outputDescription', () => {
+      component.logForm.patchValue({
+        projectId: mockProject.id,
+        date: '2026-01-13',
+        taskDescription: 'Completed task',
+        timeSpentMinutes: 60,
+        outputDescription: '', // Empty
+        revenueGenerated: 0
+      });
+
+      expect(component.logForm.valid).toBe(true);
+    });
+
+    it('should create log with empty outputDescription', fakeAsync(() => {
+      mockDailyLogService.createLog.and.returnValue(of(mockLog));
+
+      component.logForm.patchValue({
+        projectId: mockProject.id,
+        date: '2026-01-13',
+        taskDescription: 'Completed task',
+        timeSpentMinutes: 60,
+        outputDescription: '', // Empty
+        revenueGenerated: 0
+      });
+
+      component.onSubmit();
+      tick();
+
+      expect(mockDailyLogService.createLog).toHaveBeenCalledWith(
+        jasmine.objectContaining({ outputDescription: '' })
+      );
+    }));
+
+    it('should not require outputDescription field', () => {
+      component.logForm.patchValue({
+        projectId: mockProject.id,
+        date: '2026-01-13',
+        taskDescription: 'Completed task',
+        timeSpentMinutes: 60,
+        revenueGenerated: 0
+      });
+      // Do NOT set outputDescription
+
+      expect(component.logForm.valid).toBe(true);
+    });
+
+    it('should reject outputDescription exceeding max length', () => {
+      const longString = 'a'.repeat(1001);
+      component.logForm.patchValue({ outputDescription: longString });
+
+      const control = component.logForm.get('outputDescription');
+      expect(control?.hasError('maxlength')).toBe(true);
+      expect(component.logForm.valid).toBe(false);
+    });
+
+    it('should allow outputDescription with exactly 1000 characters', () => {
+      const maxString = 'a'.repeat(1000);
+      component.logForm.patchValue({
+        projectId: mockProject.id,
+        date: '2026-01-13',
+        taskDescription: 'Completed task',
+        timeSpentMinutes: 60,
+        outputDescription: maxString
+      });
+
+      const control = component.logForm.get('outputDescription');
+      expect(control?.hasError('maxlength')).toBe(false);
+      expect(component.logForm.valid).toBe(true);
+    });
+
+    it('should display optional indicator on outputDescription label', () => {
+      component.isOpen = true;
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const label = compiled.querySelector('label[for="outputDescription"]');
+      expect(label?.textContent).toContain('(optional)');
+      expect(label?.textContent).not.toContain('*');
     });
   });
 

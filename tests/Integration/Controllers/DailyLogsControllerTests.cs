@@ -188,7 +188,7 @@ public class DailyLogsControllerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task CreateDailyLog_WhenOutputDescriptionIsEmpty_ReturnsBadRequest()
+    public async Task CreateDailyLog_WhenOutputDescriptionIsEmpty_ReturnsCreated()
     {
         // Arrange
         var request = new CreateDailyLogRequest
@@ -205,9 +205,10 @@ public class DailyLogsControllerTests : IAsyncLifetime
         var response = await _client!.PostAsJsonAsync("/api/dailylogs", request);
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("output description", content, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<DailyLogResponse>();
+        Assert.NotNull(result);
+        Assert.Equal("", result.OutputDescription);
     }
 
     [Fact]

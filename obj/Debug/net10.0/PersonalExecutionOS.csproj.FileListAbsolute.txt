@@ -566,10 +566,7 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/rjsmrazor.dswa.cache.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/scopedcss/bundle/PersonalExecutionOS.styles.css
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/ewjepzw06u-{0}-3w40dnaao4-3w40dnaao4.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/amw37cy37f-{0}-vagikyz9qx-vagikyz9qx.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/z9gb11lh2e-{0}-mt49woa5jj-mt49woa5jj.gz
-/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/qqnoxgc9a1-{0}-5ipweew5fc-5ipweew5fc.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/5o5t3xag4f-{0}-39tegmrjtp-39tegmrjtp.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/gmf65hs2lc-{0}-5ipweew5fc-5ipweew5fc.gz
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/staticwebassets.build.json
@@ -583,3 +580,9 @@
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/PersonalExecutionOS.pdb
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/PersonalExecutionOS.genruntimeconfig.cache
 /Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/ref/PersonalExecutionOS.dll
+/Users/glenkurt/Documents/Projects/Personal execution OS/bin/Debug/net10.0/appsettings.Production.json
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/ewjepzw06u-{0}-8b6a286a95-8b6a286a95.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/agty40dh1w-{0}-cyep3lpml4-cyep3lpml4.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/fkp9v0b75r-{0}-wivtpghrws-wivtpghrws.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/z9gb11lh2e-{0}-ubcavfe3dr-ubcavfe3dr.gz
+/Users/glenkurt/Documents/Projects/Personal execution OS/obj/Debug/net10.0/compressed/89i5a5lqmw-{0}-hnf5rcyo4x-hnf5rcyo4x.gz

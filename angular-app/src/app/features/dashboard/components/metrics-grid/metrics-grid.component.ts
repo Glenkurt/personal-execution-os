@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MetricsSummary } from '@models/index';
 
 /**
- * MetricsGridComponent - Displays dashboard metrics in a 4-card grid.
- * Shows total hours, active projects, monthly, and weekly stats.
+ * MetricsGridComponent - Displays simplified dashboard metrics in a 2x2 grid.
+ * Shows total hours, total revenue, current streak, and longest streak.
  */
 @Component({
   selector: 'app-metrics-grid',
@@ -14,29 +14,33 @@ import { MetricsSummary } from '@models/index';
     <section class="section metrics-section" *ngIf="metrics">
       <h2>Quick Metrics</h2>
       <div class="metrics-grid">
+        <!-- Card 1: Total Hours -->
         <div class="metric-card">
           <div class="metric-icon">⏰</div>
-          <div class="metric-value">{{ metrics.allProjectsHours | number: '1.1-1' }}</div>
+          <div class="metric-value">{{ metrics.totalTimeHours | number: '1.1-1' }}</div>
           <div class="metric-label">Total Hours</div>
-          <div class="metric-subtitle">All projects combined</div>
+          <div class="metric-subtitle">All time</div>
         </div>
+        <!-- Card 2: Total Revenue -->
         <div class="metric-card">
-          <div class="metric-icon">📊</div>
-          <div class="metric-value">{{ metrics.activeProjectsCount }}</div>
-          <div class="metric-label">Active Projects</div>
-          <div class="metric-subtitle">Currently running</div>
+          <div class="metric-icon">💰</div>
+          <div class="metric-value">{{ metrics.totalRevenue | currency: 'USD': 'symbol': '1.0-0' }}</div>
+          <div class="metric-label">Total Revenue</div>
+          <div class="metric-subtitle">All time</div>
         </div>
+        <!-- Card 3: Current Streak -->
         <div class="metric-card">
-          <div class="metric-icon">📅</div>
-          <div class="metric-value">{{ metrics.thisMonthHours | number: '1.1-1' }}</div>
-          <div class="metric-label">This Month</div>
-          <div class="metric-subtitle">Hours logged</div>
+          <div class="metric-icon">🔥</div>
+          <div class="metric-value">{{ metrics.currentStreakDays }}</div>
+          <div class="metric-label">Current Streak</div>
+          <div class="metric-subtitle">Consecutive days</div>
         </div>
+        <!-- Card 4: Longest Streak -->
         <div class="metric-card">
-          <div class="metric-icon">📈</div>
-          <div class="metric-value">{{ metrics.thisWeekHours | number: '1.1-1' }}</div>
-          <div class="metric-label">This Week</div>
-          <div class="metric-subtitle">Hours logged</div>
+          <div class="metric-icon">🏆</div>
+          <div class="metric-value">{{ metrics.longestStreakDays }}</div>
+          <div class="metric-label">Longest Streak</div>
+          <div class="metric-subtitle">Personal best</div>
         </div>
       </div>
     </section>
@@ -58,7 +62,7 @@ import { MetricsSummary } from '@models/index';
 
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
     }
 
@@ -103,9 +107,14 @@ import { MetricsSummary } from '@models/index';
       margin: 0;
     }
 
+    @media (max-width: 768px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 640px) {
       .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
       }
 
